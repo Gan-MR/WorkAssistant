@@ -35,6 +35,8 @@ namespace 格式助手
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btn_stopScanXls = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label8 = new System.Windows.Forms.Label();
             this.yellow = new System.Windows.Forms.CheckBox();
             this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
@@ -44,18 +46,24 @@ namespace 格式助手
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.qing = new System.Windows.Forms.Button();
+            this.clear_Xls = new System.Windows.Forms.Button();
             this.runXls = new System.Windows.Forms.Button();
             this.xuan = new System.Windows.Forms.Button();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.xlsDir = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.CheckTxtDataBox = new System.Windows.Forms.CheckBox();
             this.del = new System.Windows.Forms.Button();
             this.dirtext = new System.Windows.Forms.TextBox();
             this.jieguo = new System.Windows.Forms.TextBox();
             this.run = new System.Windows.Forms.Button();
             this.ChooseDir = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.QuotationMark = new System.Windows.Forms.Button();
+            this.FrenchQuotes = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.Substitution = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.ccopy = new System.Windows.Forms.Button();
             this.zuijia = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -66,9 +74,11 @@ namespace 格式助手
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.label1 = new System.Windows.Forms.Label();
-            this.Substitution = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.Magic = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.MagicZ = new System.Windows.Forms.Label();
             this.tabPage5.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -77,8 +87,9 @@ namespace 格式助手
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage5
@@ -101,8 +112,8 @@ namespace 格式助手
             this.textBox4.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox4.Size = new System.Drawing.Size(1225, 724);
             this.textBox4.TabIndex = 1;
-            this.textBox4.Text = "应用程序语言：C#\r\n框架：.NETFramework 目标版本=v4.6\r\n应用程序最低运行要求：\r\nWindows 7系统\r\n1G内存\r\n16G硬盘\r\n\r\nB" +
-    "UG反馈：1134052845@qq.com\r\n\r\n";
+            this.textBox4.Text = "应用程序语言：C#\r\n应用程序最低运行要求：\r\nMicrosoft公共语言库4.x\r\n.NETFramework 4.6运行库\r\nMicrosoft Window" +
+    "s 7系统\r\n\r\nBUG反馈：1134052845@qq.com\r\n\r\n";
             // 
             // tabPage4
             // 
@@ -128,6 +139,8 @@ namespace 格式助手
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.btn_stopScanXls);
+            this.tabPage3.Controls.Add(this.progressBar1);
             this.tabPage3.Controls.Add(this.label8);
             this.tabPage3.Controls.Add(this.yellow);
             this.tabPage3.Controls.Add(this.numericUpDown3);
@@ -137,7 +150,7 @@ namespace 格式助手
             this.tabPage3.Controls.Add(this.label5);
             this.tabPage3.Controls.Add(this.label4);
             this.tabPage3.Controls.Add(this.numericUpDown1);
-            this.tabPage3.Controls.Add(this.qing);
+            this.tabPage3.Controls.Add(this.clear_Xls);
             this.tabPage3.Controls.Add(this.runXls);
             this.tabPage3.Controls.Add(this.xuan);
             this.tabPage3.Controls.Add(this.textBox5);
@@ -147,8 +160,28 @@ namespace 格式助手
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(1240, 736);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "链接有效性检测（不稳定）";
+            this.tabPage3.Text = "链接有效性检测（实验性）";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btn_stopScanXls
+            // 
+            this.btn_stopScanXls.Enabled = false;
+            this.btn_stopScanXls.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btn_stopScanXls.Location = new System.Drawing.Point(783, 68);
+            this.btn_stopScanXls.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btn_stopScanXls.Name = "btn_stopScanXls";
+            this.btn_stopScanXls.Size = new System.Drawing.Size(108, 42);
+            this.btn_stopScanXls.TabIndex = 27;
+            this.btn_stopScanXls.Text = "停止扫描";
+            this.btn_stopScanXls.UseVisualStyleBackColor = true;
+            this.btn_stopScanXls.Click += new System.EventHandler(this.btn_stopScanXls_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(6, 151);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(1227, 23);
+            this.progressBar1.TabIndex = 26;
             // 
             // label8
             // 
@@ -260,17 +293,17 @@ namespace 格式助手
             0,
             0});
             // 
-            // qing
+            // clear_Xls
             // 
-            this.qing.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.qing.Location = new System.Drawing.Point(897, 68);
-            this.qing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.qing.Name = "qing";
-            this.qing.Size = new System.Drawing.Size(108, 42);
-            this.qing.TabIndex = 15;
-            this.qing.Text = "清除结果";
-            this.qing.UseVisualStyleBackColor = true;
-            this.qing.Click += new System.EventHandler(this.qing_Click);
+            this.clear_Xls.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.clear_Xls.Location = new System.Drawing.Point(897, 68);
+            this.clear_Xls.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.clear_Xls.Name = "clear_Xls";
+            this.clear_Xls.Size = new System.Drawing.Size(108, 42);
+            this.clear_Xls.TabIndex = 15;
+            this.clear_Xls.Text = "清除结果";
+            this.clear_Xls.UseVisualStyleBackColor = true;
+            this.clear_Xls.Click += new System.EventHandler(this.clear_Xls_Click);
             // 
             // runXls
             // 
@@ -280,9 +313,9 @@ namespace 格式助手
             this.runXls.Name = "runXls";
             this.runXls.Size = new System.Drawing.Size(108, 42);
             this.runXls.TabIndex = 14;
-            this.runXls.Text = "开始检查";
+            this.runXls.Text = "开始扫描";
             this.runXls.UseVisualStyleBackColor = true;
-            this.runXls.Click += new System.EventHandler(this.runXls_Click);
+            this.runXls.Click += new System.EventHandler(this.RunXls_Click);
             // 
             // xuan
             // 
@@ -299,15 +332,15 @@ namespace 格式助手
             // textBox5
             // 
             this.textBox5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox5.Location = new System.Drawing.Point(6, 150);
+            this.textBox5.Location = new System.Drawing.Point(6, 179);
             this.textBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox5.Multiline = true;
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
             this.textBox5.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox5.Size = new System.Drawing.Size(1227, 581);
+            this.textBox5.Size = new System.Drawing.Size(1227, 552);
             this.textBox5.TabIndex = 13;
-            this.textBox5.Text = "检测结果将会出现在这里。当前状态：空闲\r\n目前可以检测链接是否能正常打开\r\n";
+            this.textBox5.Text = "检测结果将会出现在这里。当前状态：空闲\r\n目前可以检测链接是否能正常打开（结果可能不完全正确）\r\n";
             // 
             // xlsDir
             // 
@@ -321,6 +354,7 @@ namespace 格式助手
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.CheckTxtDataBox);
             this.tabPage2.Controls.Add(this.del);
             this.tabPage2.Controls.Add(this.dirtext);
             this.tabPage2.Controls.Add(this.jieguo);
@@ -335,6 +369,17 @@ namespace 格式助手
             this.tabPage2.Text = "批量压缩包检测";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // CheckTxtDataBox
+            // 
+            this.CheckTxtDataBox.AutoSize = true;
+            this.CheckTxtDataBox.Font = new System.Drawing.Font("宋体", 16F);
+            this.CheckTxtDataBox.Location = new System.Drawing.Point(30, 86);
+            this.CheckTxtDataBox.Name = "CheckTxtDataBox";
+            this.CheckTxtDataBox.Size = new System.Drawing.Size(277, 31);
+            this.CheckTxtDataBox.TabIndex = 25;
+            this.CheckTxtDataBox.Text = "不检查文本具体内容";
+            this.CheckTxtDataBox.UseVisualStyleBackColor = true;
+            // 
             // del
             // 
             this.del.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -345,7 +390,7 @@ namespace 格式助手
             this.del.TabIndex = 11;
             this.del.Text = "清除结果";
             this.del.UseVisualStyleBackColor = true;
-            this.del.Click += new System.EventHandler(this.del_Click);
+            this.del.Click += new System.EventHandler(this.Del_Click);
             // 
             // dirtext
             // 
@@ -368,8 +413,9 @@ namespace 格式助手
             this.jieguo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.jieguo.Size = new System.Drawing.Size(1228, 589);
             this.jieguo.TabIndex = 9;
-            this.jieguo.Text = "检测结果将会出现在这里。当前状态：空闲\r\n目前可以检测的内容有：\r\n图片数量>4\r\n文本=1，且文本行数=图片张数，文本第一行少于四个字\r\n压缩包内存在超过17个" +
-    "相同连续字符，文本是否为空，是否包含空格，笔者，小编等关键字\r\n文本的数字与压缩包的数字是否匹配\r\n是否存在嵌套压缩包";
+            this.jieguo.Text = "检测结果将会出现在这里。当前状态：空闲\r\n\r\n目前可以检测的内容有：\r\n图片数量>4，文本=1，且文本行数=图片张数，文本第一行少于四个字\r\n文本命名规范“【XX" +
+    "X】本题图片文本”，文本文件编号与压缩包编号匹配\r\n\r\n文本具体内容检查：压缩包内文本存在超过17个相同连续字符，文本是否为空，是否包含空格，笔者，小编，英文问" +
+    "号等关键字\r\n\r\n检测压缩包名字是否包含空格\r\n是否存在嵌套压缩包";
             // 
             // run
             // 
@@ -379,7 +425,7 @@ namespace 格式助手
             this.run.Name = "run";
             this.run.Size = new System.Drawing.Size(108, 42);
             this.run.TabIndex = 10;
-            this.run.Text = "开始检查";
+            this.run.Text = "开始扫描";
             this.run.UseVisualStyleBackColor = true;
             this.run.Click += new System.EventHandler(this.run_Click);
             // 
@@ -397,6 +443,8 @@ namespace 格式助手
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.QuotationMark);
+            this.tabPage1.Controls.Add(this.FrenchQuotes);
             this.tabPage1.Controls.Add(this.pictureBox1);
             this.tabPage1.Controls.Add(this.Substitution);
             this.tabPage1.Controls.Add(this.label1);
@@ -417,6 +465,56 @@ namespace 格式助手
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "文字转换";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // QuotationMark
+            // 
+            this.QuotationMark.Font = new System.Drawing.Font("宋体", 16F);
+            this.QuotationMark.Location = new System.Drawing.Point(1031, 210);
+            this.QuotationMark.Name = "QuotationMark";
+            this.QuotationMark.Size = new System.Drawing.Size(203, 50);
+            this.QuotationMark.TabIndex = 21;
+            this.QuotationMark.Text = "+-中文引号";
+            this.QuotationMark.UseVisualStyleBackColor = true;
+            this.QuotationMark.Click += new System.EventHandler(this.QuotationMark_Click);
+            // 
+            // FrenchQuotes
+            // 
+            this.FrenchQuotes.Font = new System.Drawing.Font("宋体", 16F);
+            this.FrenchQuotes.Location = new System.Drawing.Point(812, 210);
+            this.FrenchQuotes.Name = "FrenchQuotes";
+            this.FrenchQuotes.Size = new System.Drawing.Size(213, 50);
+            this.FrenchQuotes.TabIndex = 20;
+            this.FrenchQuotes.Text = "+-中文书名号";
+            this.FrenchQuotes.UseVisualStyleBackColor = true;
+            this.FrenchQuotes.Click += new System.EventHandler(this.FrenchQuotes_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(794, 244);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(17, 260);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 19;
+            this.pictureBox1.TabStop = false;
+            // 
+            // Substitution
+            // 
+            this.Substitution.Font = new System.Drawing.Font("宋体", 12F);
+            this.Substitution.Location = new System.Drawing.Point(812, 179);
+            this.Substitution.Name = "Substitution";
+            this.Substitution.Size = new System.Drawing.Size(421, 30);
+            this.Substitution.TabIndex = 18;
+            this.Substitution.Text = "“”《》『』\"\"‘’{}~:;@\\#￥……&<>?「」";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(809, 148);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(112, 15);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "清理以下符号：";
             // 
             // ccopy
             // 
@@ -448,9 +546,9 @@ namespace 格式助手
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(416, 158);
             this.label2.TabIndex = 14;
-            this.label2.Text = "简要说明：\r\n1、数字日期转大写的识别依赖“年”“月”“日”，可以没有“月”“日”或没有“日”，但必须要有“年”它才会工作。\r\n2、特殊符号处理只会删除《》“”{" +
-    "}，这些符号，还会将 ~ 替换成 至 ，并且将分号转换成句号，且会将英文的冒号逗号问号感叹号换成中文符号。当 . 前后有数字时不会被替换 。\r\n3、就是清理括号" +
-    "，连同文本";
+            this.label2.Text = "简要说明：\r\n1、数字日期转大写会把文本中的数字日期全部转成中文大写。“月”“日”前面的数字不应该超过31，如果超过则会替换成十一\r\n2、特殊符号处理会删除以上文" +
+    "本框内包含的符号，还会将 ~ 替换成 至 ，并且将分号转换成句号，且会将英文的冒号逗号问号感叹号换成中文符号。当 . 前后有数字时不会被替换 。\r\n3、就是清理" +
+    "括号，连同文本";
             // 
             // CopyText2
             // 
@@ -510,7 +608,7 @@ namespace 格式助手
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(783, 344);
+            this.textBox1.Size = new System.Drawing.Size(783, 347);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -518,12 +616,12 @@ namespace 格式助手
             // textBox2
             // 
             this.textBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox2.Location = new System.Drawing.Point(6, 372);
+            this.textBox2.Location = new System.Drawing.Point(6, 371);
             this.textBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox2.Size = new System.Drawing.Size(782, 359);
+            this.textBox2.Size = new System.Drawing.Size(782, 360);
             this.textBox2.TabIndex = 5;
             this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
             // 
@@ -532,6 +630,7 @@ namespace 格式助手
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Location = new System.Drawing.Point(0, 1);
@@ -542,32 +641,61 @@ namespace 格式助手
             this.tabControl1.Size = new System.Drawing.Size(1248, 765);
             this.tabControl1.TabIndex = 12;
             // 
-            // label1
+            // tabPage6
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(809, 148);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 15);
-            this.label1.TabIndex = 17;
-            this.label1.Text = "清理以下符号：";
+            this.tabPage6.Controls.Add(this.MagicZ);
+            this.tabPage6.Controls.Add(this.label9);
+            this.tabPage6.Controls.Add(this.label3);
+            this.tabPage6.Controls.Add(this.Magic);
+            this.tabPage6.Location = new System.Drawing.Point(4, 25);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(1240, 736);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "键盘宏";
+            this.tabPage6.UseVisualStyleBackColor = true;
             // 
-            // Substitution
+            // Magic
             // 
-            this.Substitution.Location = new System.Drawing.Point(812, 179);
-            this.Substitution.Name = "Substitution";
-            this.Substitution.Size = new System.Drawing.Size(421, 25);
-            this.Substitution.TabIndex = 18;
-            this.Substitution.Text = "《》『』\"\"‘’“”{}~:;@\\-“”#￥%……&<>?+";
+            this.Magic.Font = new System.Drawing.Font("宋体", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Magic.Location = new System.Drawing.Point(68, 264);
+            this.Magic.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Magic.Name = "Magic";
+            this.Magic.Size = new System.Drawing.Size(295, 79);
+            this.Magic.TabIndex = 13;
+            this.Magic.Text = "启动/关闭";
+            this.Magic.UseVisualStyleBackColor = true;
+            this.Magic.Click += new System.EventHandler(this.Magic_Click);
             // 
-            // pictureBox1
+            // label3
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(794, 244);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(17, 260);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 19;
-            this.pictureBox1.TabStop = false;
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("宋体", 16F);
+            this.label3.Location = new System.Drawing.Point(63, 54);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(420, 27);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "把tab键变成复制，win键变成粘贴";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("宋体", 16F);
+            this.label9.Location = new System.Drawing.Point(63, 141);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(201, 27);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "功能当前状态：";
+            // 
+            // MagicZ
+            // 
+            this.MagicZ.AutoSize = true;
+            this.MagicZ.Font = new System.Drawing.Font("宋体", 16F);
+            this.MagicZ.ForeColor = System.Drawing.Color.Red;
+            this.MagicZ.Location = new System.Drawing.Point(270, 141);
+            this.MagicZ.Name = "MagicZ";
+            this.MagicZ.Size = new System.Drawing.Size(93, 27);
+            this.MagicZ.TabIndex = 16;
+            this.MagicZ.Text = "未运行";
             // 
             // Form1
             // 
@@ -578,7 +706,7 @@ namespace 格式助手
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
-            this.Text = "工作助手V1.7（内测版）";
+            this.Text = "工作助手V2.1（技术预览版）";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
@@ -593,8 +721,10 @@ namespace 格式助手
             this.tabPage2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -614,7 +744,7 @@ namespace 格式助手
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.Button qing;
+        private System.Windows.Forms.Button clear_Xls;
         private System.Windows.Forms.Button runXls;
         private System.Windows.Forms.Button xuan;
         private System.Windows.Forms.TextBox textBox5;
@@ -640,6 +770,16 @@ namespace 格式助手
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox Substitution;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button QuotationMark;
+        private System.Windows.Forms.Button FrenchQuotes;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button btn_stopScanXls;
+        private System.Windows.Forms.CheckBox CheckTxtDataBox;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.Label MagicZ;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button Magic;
     }
 }
 

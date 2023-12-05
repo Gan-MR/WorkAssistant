@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using 工作助手.Function;
 
@@ -10,28 +8,42 @@ namespace 格式助手
 {
     public partial class Form1 : Form
     {
+        DateTime lastCloseButtonClick = DateTime.MinValue;//窗口防误关计时器
+        private GlobalKeyboardListener _keyboardListener;//键盘宏初始化
         public Form1()
         {
             InitializeComponent();
             KeyPreview = true; // 允许窗体接收键盘事件
-            KeyDown += MyForm_KeyDown; // 注册KeyDown事件处理方法
-        }
-        
+            KeyDown += MyForm_KeyDown; // 自定义的KeyDown事件处理方法
+            FormClosing += new FormClosingEventHandler(Form1_FormClosing);// 自定义的Form1_FormClosing事件处理方法（防误关）
+        }       
 
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)//开窗时
         {
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
                 checkedListBox1.SetItemChecked(i, true);//字符转换界面，默认启动全部功能
-            }
-
-            jieguo.Font = new Font("Microsoft YaHei", 12, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
+            }   
         }
-        
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)//关窗（防误关）
+        {
+            if ((DateTime.Now - lastCloseButtonClick).TotalMilliseconds < SystemInformation.DoubleClickTime)
+            {
+                // 用户在短时间内两次点击了关闭按钮，执行关闭操作
+                e.Cancel = false;
+            }
+            else
+            {
+                // 用户第一次点击关闭按钮，弹出悬浮提示
+                ToolTip toolTip = new ToolTip();
+                toolTip.Show("快速点3下以关闭该应用程序", this, Width / 2-50, Height / 2-200, 2000);
+                e.Cancel = true;
+                lastCloseButtonClick = DateTime.Now;
+            }
+        }
+
         characterManipulation cm = new characterManipulation();
         string f1; // 将 f1 声明为成员变量
-
         public void Function1()
         {
             // 第一个功能的实现代码
@@ -44,7 +56,7 @@ namespace 格式助手
             if (checkedListBox1.GetItemChecked(0))
             {
                 // 将分号替换成句号,并清理特殊符号
-                string f2 = characterManipulation.RemoveSpecialSymbols(f1,Substitution.Text);
+                string f2 = characterManipulation.RemoveSpecialSymbols(f1, Substitution.Text);
                 textBox2.Text = f2;
             }
             else
@@ -72,7 +84,35 @@ namespace 格式助手
                 textBox2.Text = characterManipulation.RemoveParentheses(textBox1.Text);
             }
         }
+        //+-书名号和中文引号Start-------------------------
+        private void FrenchQuotes_Click(object sender, EventArgs e)
+        {
+            string inputText = Substitution.Text;
+            if (inputText.Contains("《") && inputText.Contains("》"))
+            {
+                inputText = inputText.Replace("《", "").Replace("》", "");
+            }
+            else
+            {
+                inputText = "《》" + inputText;
+            }
+            Substitution.Text = inputText;
+        }
 
+        private void QuotationMark_Click(object sender, EventArgs e)
+        {
+            string inputText = Substitution.Text;
+            if (inputText.Contains("“") && inputText.Contains("”"))
+            {
+                inputText = inputText.Replace("“", "").Replace("”", "");
+            }
+            else
+            {
+                inputText = "“”" + inputText;
+            }
+            Substitution.Text = inputText;
+        }
+        //+-书名号和中文引号End-------------------------
         //自动或手动触发文字转换功能Start-------------------------
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -149,12 +189,11 @@ namespace 格式助手
         //压缩包扫描Start-----------------------------
         private void ChooseDir_Click(object sender, EventArgs e)
         {
-            string path = string.Empty;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.Description = "选择压缩包所在的目录";
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                path = fbd.SelectedPath;
+                string path = fbd.SelectedPath;
                 dirtext.Text = path;
             }
         }
@@ -163,41 +202,45 @@ namespace 格式助手
             string directoryPath = dirtext.Text;
 
             ZipScanner zipScanner = new ZipScanner();
-            zipScanner.ScanDirectory(directoryPath);
+            zipScanner.ScanDirectory(directoryPath, CheckTxtDataBox.Checked);
 
             jieguo.Text = zipScanner.GetOutput();
         }
-        private void del_Click(object sender, EventArgs e)
+        private void Del_Click(object sender, EventArgs e)
         {
             jieguo.Text = "检测结果将会出现在这里。当前状态：空闲";
         }
         //压缩包扫描End-----------------------------
 
-
-
         //表格扫描Start-----------------------------
-        private void runXls_Click(object sender, EventArgs e)//扫表格
+        private async void RunXls_Click(object sender, EventArgs e)//扫表格
         {
-            string extension = System.IO.Path.GetExtension(xlsDir.Text);
+            btn_stopScanXls.Enabled = true;
+            string extension = Path.GetExtension(xlsDir.Text);
 
             if (extension == ".xls" || extension == ".xlsx" || extension == ".csv")
             {
 
-                textBox5.Text = "扫描中，稍等。。。";
+                textBox5.Text = "扫描中，稍等。。。\r\n";
                 ScanXls scanXls = new ScanXls();
-                scanXls.CheckExcelLinks(xlsDir.Text, 
+                progressBar1.Maximum = (int)numericUpDown2.Value;
+
+                await scanXls.CheckExcelLinks(xlsDir.Text,
                     (int)numericUpDown1.Value,
-                    (int)numericUpDown2.Value, 
+                    (int)numericUpDown2.Value,
                     (int)numericUpDown3.Value,
-                    yellow.Checked);
-                textBox5.Text +=scanXls.GetOutput();
+                    yellow.Checked, progressBar1);
+
+                textBox5.Text += scanXls.GetOutput();
+
             }
             else
             {
-                textBox5.Text = "请选择一个表格再开始。";
+                textBox5.Text = "请选择一个表格再开始。（路径或文件名异常）";
             }
+            btn_stopScanXls.Enabled = false;
         }
-        
+
         private void xuan_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -215,11 +258,56 @@ namespace 格式助手
                 }
             }
         }
-        private void qing_Click(object sender, EventArgs e)
+        private void clear_Xls_Click(object sender, EventArgs e)
         {
-            textBox5.Text = "检测结果将会出现在这里。当前状态：空闲";
+            textBox5.Text = "检测结果将会出现在这里。当前状态：空闲\r\n目前可以检测链接是否能正常打开";
+        }
+        private void btn_stopScanXls_Click(object sender, EventArgs e)
+        {
+            ScanXls.cancellationTokenSource.Cancel();
         }
         //表格扫描End-----------------------------
+        //键盘宏Start-----------------------
+
+        bool MagicT = true;
+        private void Magic_Click(object sender, EventArgs e)
+        {
+            if (MagicT)
+            {
+                MagicT = false;
+                _keyboardListener = new GlobalKeyboardListener();
+                _keyboardListener.KeyDown += KeyboardListener_KeyDown;
+                _keyboardListener.Start();
+                MagicZ.Text = "运行中";
+                MagicZ.ForeColor = Color.Green;
+            }
+            else
+            {
+                MagicT = true;
+                _keyboardListener.Stop();
+                MagicZ.Text = "未运行";
+                MagicZ.ForeColor = Color.Red;
+            }
+            
+        }
+        private void KeyboardListener_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Tab)// tab键
+            {
+                // 执行复制操作
+                SendKeys.Send("^c");
+                e.Handled = true; // 取消键的默认行为
+            }
+            else if (e.KeyCode == Keys.LWin) // win键
+            {
+                SendKeys.Send("^v");
+                // 执行粘贴操作
+                e.Handled = true; // 取消键的默认行为
+            }
+        }
+       
+        //键盘宏End-----------------------
+
         //Win7文本框全选兼容性代码Start-----------------------
         private void textBox2_KeyDown(object sender, KeyEventArgs e)//win7兼容性，ctrl+a全选结果
         {
@@ -238,9 +326,6 @@ namespace 格式助手
             }
         }
         //Win7文本框全选兼容性代码End-------------------------------
-
-
-
         //更多功能。。。。。。。。。
 
         //彩蛋

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace 工作助手.Function
 {
@@ -109,7 +105,8 @@ namespace 工作助手.Function
         {
             string pattern = @"\d{4}年\d{1,2}月\d{1,2}日|\d{4}年\d{1,2}月|\d{4}年|\d{3}年\d{1,2}月\d{1,2}日|\d{3}年\d{1,2}月|\d{3}年";
             MatchEvaluator evaluator = new MatchEvaluator(ConvertDateMatchEvaluator);
-            string output = Regex.Replace(text, pattern, evaluator);
+            string output0 = Regex.Replace(text, pattern, evaluator);
+            string output = ConvertDates(output0);
             return output;
         }
         //关键代码^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -157,6 +154,51 @@ namespace 工作助手.Function
             }
         }
 
+
+        //转换零碎的月日
+        public string ConvertDates(string input)
+        {
+            string pattern = @"(\d{1,2})月(\d{1,2})日|(\d{1,2})月|(\d{1,2})日";
+            string result = Regex.Replace(input, pattern, new MatchEvaluator(ConvertToChineseDate));
+            return result;
+        }
+
+        private string ConvertToChineseDate(Match match)
+        {
+            if (match.Groups[1].Success && match.Groups[2].Success)
+            {
+                int month = int.Parse(match.Groups[1].Value);
+                int day = int.Parse(match.Groups[2].Value);
+                return $"{ToChineseNumber(month)}月{ToChineseNumber(day)}日";
+            }
+            else if (match.Groups[3].Success)
+            {
+                int month = int.Parse(match.Groups[3].Value);
+                return $"{ToChineseNumber(month)}月";
+            }
+            else if (match.Groups[4].Success)
+            {
+                int day = int.Parse(match.Groups[4].Value);
+                return $"{ToChineseNumber(day)}日";
+            }
+            return match.Value;
+        }
+
+        private string ToChineseNumber(int number)
+        {
+            try
+            {
+                string[] chineseNumbers = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", "二十一", "二十二", "二十三", "二十四", "二十五", "二十六", "二十七", "二十八", "二十九", "三十", "三十一" };
+                return chineseNumbers[number - 1];
+            }
+            catch (Exception)
+            {
+
+                return "十一";
+            }
+        }
+
+
         //字符转换功能结束
         //ENDENDEND-----------------------------------------------
 
@@ -167,18 +209,22 @@ namespace 工作助手.Function
             string output = Regex.Replace(input, pattern, "");
             return output;
         }
-        public static string RemoveSpecialSymbols(string input,string substitution)
+        public static string RemoveSpecialSymbols(string input, string substitution)
         {
-            string rt= input.Replace("~", "至");// 将~替换成“至”
-            rt= Regex.Replace(rt, ":", "："); // 冒号
+            string rt = input.Replace("~", "至");// 将~替换成“至”
+
+            rt = Regex.Replace(rt, ":", "："); // 冒号
             rt = Regex.Replace(rt, ",", "，");// 逗号
             rt = Regex.Replace(rt, @"\?", "？");// 问号
             rt = Regex.Replace(rt, "!", "！");// 感叹号
+
             rt = Regex.Replace(rt, "；", "。");//中文分号转句号
             rt = Regex.Replace(rt, ";", "。");//英文分号转句号
+
             rt = Regex.Replace(rt, " ", "");//去除空格
             rt = Regex.Replace(rt, @"(?<!\d)\.(?!\d)", "。");//前后无数字的.替换。 
-            rt = Regex.Replace(rt, @"["+substitution+"]+", "");// 删除特殊符号
+            rt = Regex.Replace(rt, @"(\d)，(\d)", "$1$2");//去除夹在数字中的中文逗号
+            rt = Regex.Replace(rt, @"[" + substitution + "]+", "");// 删除特殊符号
             return rt;
         }
     }

@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-
-
-
+using System.Text.RegularExpressions;
 
 namespace 工作助手.Function
 {
@@ -16,106 +11,156 @@ namespace 工作助手.Function
     {
 
         private StringBuilder outputBuilder;
-        int jisu = 0;
+        int bugjisu = 0;
         int zipjisu = 0;
         public ZipScanner()
         {
             outputBuilder = new StringBuilder();
         }
 
-        public void ScanDirectory(string directoryPath)
+        public void ScanDirectory(string directoryPath, bool CheckTxtData)
         {
-            
-            string[] zipFiles = Directory.GetFiles(directoryPath, "*.zip");
-
-            if (zipFiles.Length == 0)
+            try
             {
-                AppendOutput("该目录下没有找到.zip压缩包文件");
-                return;
-            }
+                string[] zipFiles = Directory.GetFiles(directoryPath, "*.zip");
 
-            foreach (string zipFile in zipFiles)
-            {
-                // 执行扫描操作
-                
-                CheckTextFileCountAndImageCount(zipFile);//文本=1，且文本行数=图片张数，文本第一行少于四个字
-                CheckTextFileContent(zipFile);//压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含空格，笔者，小编等关键字
-                CheckTextFileNumber(zipFile);//文本的数字与压缩包的数字
-                CheckNestedZipFiles(zipFile);//嵌套压缩包
-                zipjisu++;
-            }
-            if (GetOutput().Length == 0)
-            {
 
-                AppendOutput("扫描已完成，扫描了"+ zipjisu +"个压缩包，没有发现已知问题");
-                
-            }
-            else
-            {
-                AppendOutput("本次扫描了 "+zipjisu+" 个压缩包，发现了 "+ jisu + " 个问题");
-            }
+                if (zipFiles.Length == 0)
+                {
+                    AppendOutput("该目录下没有找到.zip压缩包文件");
+                    return;
+                }
 
+                foreach (string zipFile in zipFiles)
+                {
+                    // 执行扫描操作
+
+                    CheckTextFileCountAndImageCount(zipFile);//图片数量>4，文本=1，且文本行数=图片张数，文本第一行少于四个字，文本命名规范【XXX】本题图片文本，文本文件编号与压缩包编号匹配
+                    if (!CheckTxtData)
+                        CheckTextFileContent(zipFile);//压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含空格，笔者，小编，英文问号等关键字
+                    CheckNestedZipFiles(zipFile);//嵌套压缩包
+                    zipjisu++;
+                }
+                if (GetOutput().Length == 0)
+                {
+
+                    AppendOutput("扫描已完成，扫描了" + zipjisu + "个压缩包，没有发现已知问题");
+
+                }
+                else
+                {
+                    AppendOutput("本次扫描了 " + zipjisu + " 个压缩包，发现了 " + bugjisu + " 个问题");
+                }
+            }
+            catch (Exception) { AppendOutput("扫描启动失败，未设定目录或选择所目录异常"); }
         }
 
-        
-
-        private void CheckTextFileCountAndImageCount(string zipFile)//检测文本=1，且文本行数=图片张数，文本第一行不少于四个字
+        public void CheckTextFileCountAndImageCount(string zipFilePath)
         {
-            int textFileCount = 0;
-            int imageCount = 0;
-            int textLineCount = 1;
-            bool textFileFound = false;
-            bool textLineAndImageCountMismatch = false;
-
-            using (ZipArchive archive = ZipFile.OpenRead(zipFile))
+            try
             {
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                using (ZipArchive archive = ZipFile.OpenRead(zipFilePath))
                 {
-                    if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                    // 检查压缩包内是否只包含一个文本文件
+                    ZipArchiveEntry textFileEntry = null;
+                    foreach (ZipArchiveEntry entry in archive.Entries)
                     {
-                        textFileCount++;
-                        textFileFound = true;
-                        using (StreamReader reader = new StreamReader(entry.Open()))
+                        if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (textFileEntry != null)
+                            {
+                                AppendOutput(Path.GetFileName(zipFilePath) + " - 包含多个文本文件。");
+
+                            }
+                            textFileEntry = entry;
+                        }
+                    }
+                    if (textFileEntry == null)
+                    {
+                        AppendOutput(Path.GetFileName(zipFilePath) + " - 没有找到文本文件。");
+                        //return;
+                    }
+
+                    // 检查文本文件的行数是否与图片文件的数量匹配
+                    int imageCount = 0;
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        if (!entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                        {
+                            imageCount++;
+                        }
+                    }
+                    using (Stream stream = textFileEntry.Open())
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        int lineCount = 0;
+                        while (!reader.EndOfStream)
+                        {
+                            reader.ReadLine();
+                            lineCount++;
+                        }
+                        if (lineCount != imageCount)
+                        {
+                            AppendOutput(Path.GetFileName(zipFilePath) + " - 图片与文本行数不符，发现" + imageCount + "个.jpg图片文件，" + lineCount + "行文本。");
+                            //return;
+                        }
+                    }
+
+                    // 检查压缩包内是否至少包含四个图片文件
+                    if (imageCount < 4)
+                    {
+                        AppendOutput(Path.GetFileName(zipFilePath) + " - 包含少于4个图片文件。");
+                        //return;
+                    }
+
+                    // 检查文本文件的第一行内容是否至少包含4个字符
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        using (StreamReader reader = new StreamReader(entry.Open(), Encoding.Default))
                         {
                             string firstLine = reader.ReadLine();
                             if (firstLine != null && firstLine.Length < 4)
                             {
-                                AppendOutput($"{Path.GetFileName(zipFile)} - .txt文本的第一行小于4个字");
+                                AppendOutput($"{Path.GetFileName(zipFilePath)} - .txt文本的第一行小于4个字");
                             }
 
-                            while (reader.ReadLine() != null)
-                            {
-                                textLineCount++;
-                            }
+
                         }
                     }
-                    else if (entry.FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
+
+                    // 检查压缩包的文件名是否与文本文件名匹配
+                    string archiveName = Path.GetFileNameWithoutExtension(zipFilePath);
+                    string textFileName = Path.GetFileNameWithoutExtension(textFileEntry.FullName);
+                    int bracketStart = textFileName.LastIndexOf('【');
+                    int bracketEnd = textFileName.LastIndexOf('】');
+                    if (bracketStart >= 0 && bracketEnd > bracketStart)
                     {
-                        imageCount++;
+                        Match match = Regex.Match(archiveName, @"(.+?)\p{IsCJKUnifiedIdeographs}+", RegexOptions.IgnoreCase);
+                        string expectedName = textFileName.Substring(bracketStart + 1, bracketEnd - bracketStart - 1);
+                        if (!match.Groups[1].Value.EndsWith(expectedName))
+                        {
+                            AppendOutput(Path.GetFileName(zipFilePath) + " - 与压缩包内的文本命名 " + expectedName + " 不匹配。");
+                            return;
+                        }
                     }
+                    if (Regex.IsMatch(textFileName, @"^【.*】本题图片文本$"))
+                    {
+
+                    }
+                    else
+                    {
+                        AppendOutput(Path.GetFileName(zipFilePath) + " - 文本文件不符合“【XXX】本题图片文本”命名要求");
+                    }
+                    //AppendOutput(Path.GetFileName(zipFilePath)+" - 通过所有检查。");
                 }
             }
-
-            if (!textFileFound)
+            catch (Exception ex)
             {
-                AppendOutput($"{Path.GetFileName(zipFile)} - 未找到文本文件");
-            }
-            else if (textFileCount == 1 && textLineCount == imageCount)
-            {
-                // Do something if the conditions are met
-            }
-            else
-            {
-                textLineAndImageCountMismatch = true;
+                AppendOutput(string.Format("扫描压缩包 " + Path.GetFileName(zipFilePath) + " 时出现错误：" + ex.Message + "\r\n可能该压缩包没有符合规格的文件或者没有授予访问权限"));
             }
 
-            if (textLineAndImageCountMismatch)
-            {
-                AppendOutput($"{Path.GetFileName(zipFile)} - 文本行数和图片数量不一致，文本行数: {textLineCount} ，jpg图片数量: {imageCount}");
-            }
+
         }
-
-
 
         private void CheckTextFileContent(string zipFile)//压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含空格
         {
@@ -153,45 +198,23 @@ namespace 工作助手.Function
                                 }
 
                                 // 检测文本中是否包含空格
-                                if (line.Contains(" "))
-                                {
-                                    int startIndex = Math.Max(0, line.IndexOf(" ") - 8);
-                                    int endIndex = Math.Min(line.Length, line.IndexOf(" ") + 8 + 1);
-                                    string context = line.Substring(startIndex, endIndex - startIndex);
-                                    AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包文本的第 { lineIndex } 行包含空格: {context}");
-                                }
-                                if (line.Contains("小编"))// 检测文本中是否包含“小编”
-                                {
-                                    int startIndex = Math.Max(0, line.IndexOf("小编") - 8);
-                                    int endIndex = Math.Min(line.Length, line.IndexOf("小编") + 8 + 1);
-                                    string context = line.Substring(startIndex, endIndex - startIndex);
-                                    AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包文本的第 { lineIndex } 行包含“小编”: {context}");
-                                }
-                                if (line.Contains("笔者"))// 检测文本中是否包含“笔者”
-                                {
-                                    int startIndex = Math.Max(0, line.IndexOf("笔者") - 8);
-                                    int endIndex = Math.Min(line.Length, line.IndexOf("笔者") + 8 + 1);
-                                    string context = line.Substring(startIndex, endIndex - startIndex);
-                                    AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包文本的第 { lineIndex } 行包含“笔者”: {context}");
-                                }
-                                if (line.Contains("?"))// 检测文本中是否包含“?”
-                                {
-                                    int startIndex = Math.Max(0, line.IndexOf("?") - 8);
-                                    int endIndex = Math.Min(line.Length, line.IndexOf("?") + 8 + 1);
-                                    string context = line.Substring(startIndex, endIndex - startIndex);
-                                    AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包文本的第 { lineIndex } 行包含“英文问号（?）”: {context}");
-                                }
+                                CheckAndAppendOutput(zipFile, lineIndex, line, " ", "空格");
+                                CheckAndAppendOutput(zipFile, lineIndex, line, "小编", "小编");
+                                CheckAndAppendOutput(zipFile, lineIndex, line, "笔者", "笔者");
+                                CheckAndAppendOutput(zipFile, lineIndex, line, "?", "英文问号（?）");
                             }
 
                             // 如果文本文件为空，输出提示信息
                             if (isEmpty)
                             {
-                                AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包的 {entry.FullName} 文本文件内容为空");
+                                AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包的文本文件内容为空");
                             }
                         }
                     }
                 }
-            }  
+
+            }
+
             // 查找重复的文本行
             foreach (KeyValuePair<string, List<int>> pair in lineIndexMap)
             {
@@ -208,46 +231,28 @@ namespace 工作助手.Function
 
                 foreach (string line in repeatedLines)
                 {
-                    
+
                     foreach (int index in lineIndexMap[line])
                     {
-                        outputBuilder.Append("第"+$"{index}"+"行");
+                        outputBuilder.Append("第" + $"{index}" + "行");
                     }
-                    
+
                 }
                 AppendOutput(outputBuilder.ToString());
             }
         }
 
-        private void CheckTextFileNumber(string zipFile)//文本的数字与压缩包的数字
+        private void CheckAndAppendOutput(string zipFile, int lineIndex, string line, string keyword, string message)//外置查找非法内容
         {
-            using (ZipArchive archive = ZipFile.OpenRead(zipFile))
+            if (line.Contains(keyword))
             {
-                ZipArchiveEntry textFileEntry = archive.Entries.FirstOrDefault(entry =>
-                    entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase));
-
-                if (textFileEntry != null)
-                {
-                    string textFileName = Path.GetFileNameWithoutExtension(textFileEntry.Name);
-                    string zipFileName = Path.GetFileNameWithoutExtension(zipFile);
-
-                    if (!textFileName.Any(char.IsDigit) || !zipFileName.Any(char.IsDigit))
-                    {
-                        AppendOutput($"{Path.GetFileName(zipFile)} - 压缩包的数字编号与内部文本不匹配");
-                    }
-                    else
-                    {
-                        string textFileNumber = new string(textFileName.Where(char.IsDigit).ToArray());
-                        string zipFileNumber = new string(zipFileName.Where(char.IsDigit).ToArray());
-
-                        if (textFileNumber != zipFileNumber)
-                        {
-                            AppendOutput($"{Path.GetFileName(zipFile)} - 压缩包的数字编号与内部文本不匹配");
-                        }
-                    }
-                }
+                int startIndex = Math.Max(0, line.IndexOf(keyword) - 8);
+                int endIndex = Math.Min(line.Length, line.IndexOf(keyword) + 8 + 1);
+                string context = line.Substring(startIndex, endIndex - startIndex);
+                AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包文本的第 {lineIndex} 行包含“{message}”: {context}");
             }
         }
+
 
         private void CheckNestedZipFiles(string zipFile)//检测是否存在嵌套压缩包
         {
@@ -333,7 +338,7 @@ namespace 工作助手.Function
         private void AppendOutput(string text)
         {
             outputBuilder.AppendLine(text);
-            jisu++;
+            bugjisu++;
         }
         public string GetOutput()
         {
