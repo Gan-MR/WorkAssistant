@@ -74,11 +74,28 @@ namespace 格式助手
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.label13 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.xuan2 = new System.Windows.Forms.Button();
+            this.dir2 = new System.Windows.Forms.TextBox();
+            this.qingli = new System.Windows.Forms.Button();
+            this.dir1 = new System.Windows.Forms.TextBox();
+            this.scanjieguo2 = new System.Windows.Forms.TextBox();
+            this.runScan = new System.Windows.Forms.Button();
+            this.xuan1 = new System.Windows.Forms.Button();
             this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.Magic = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.copyKey = new System.Windows.Forms.TextBox();
             this.MagicZ = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.Magic = new System.Windows.Forms.Button();
             this.tabPage5.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -89,6 +106,7 @@ namespace 格式助手
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabControl1.SuspendLayout();
+            this.tabPage7.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -366,7 +384,7 @@ namespace 格式助手
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage2.Size = new System.Drawing.Size(1240, 736);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "批量压缩包检测";
+            this.tabPage2.Text = "批量压缩包内容质量检测";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // CheckTxtDataBox
@@ -505,7 +523,7 @@ namespace 格式助手
             this.Substitution.Name = "Substitution";
             this.Substitution.Size = new System.Drawing.Size(421, 30);
             this.Substitution.TabIndex = 18;
-            this.Substitution.Text = "“”《》『』\"\"‘’{}~:;@\\#￥……&<>?「」";
+            this.Substitution.Text = "[]『』\"‘’{}~:;@\\#￥……&<>?「」";
             // 
             // label1
             // 
@@ -546,9 +564,9 @@ namespace 格式助手
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(416, 158);
             this.label2.TabIndex = 14;
-            this.label2.Text = "简要说明：\r\n1、数字日期转大写会把文本中的数字日期全部转成中文大写。“月”“日”前面的数字不应该超过31，如果超过则会替换成十一\r\n2、特殊符号处理会删除以上文" +
-    "本框内包含的符号，还会将 ~ 替换成 至 ，并且将分号转换成句号，且会将英文的冒号逗号问号感叹号换成中文符号。当 . 前后有数字时不会被替换 。\r\n3、就是清理" +
-    "括号，连同文本";
+            this.label2.Text = "简要说明：\r\n1、数字日期转大写会把文本中的数字日期全部转成中文大写。“月”“日”前面的数字不应该超过31，如果超过则会替换成十一。\r\n2、特殊符号处理会删除以上" +
+    "文本框内包含的符号以及换行符、空格，并且将分号转换成句号，并且会将英文的冒号逗号问号感叹号换成中文符号。当 . 前后有数字时不会被替换 。\r\n3、就是清理括号，" +
+    "连同括号中的文本。";
             // 
             // CopyText2
             // 
@@ -629,6 +647,7 @@ namespace 格式助手
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tabPage4);
@@ -641,8 +660,138 @@ namespace 格式助手
             this.tabControl1.Size = new System.Drawing.Size(1248, 765);
             this.tabControl1.TabIndex = 12;
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.label13);
+            this.tabPage7.Controls.Add(this.comboBox1);
+            this.tabPage7.Controls.Add(this.xuan2);
+            this.tabPage7.Controls.Add(this.dir2);
+            this.tabPage7.Controls.Add(this.qingli);
+            this.tabPage7.Controls.Add(this.dir1);
+            this.tabPage7.Controls.Add(this.scanjieguo2);
+            this.tabPage7.Controls.Add(this.runScan);
+            this.tabPage7.Controls.Add(this.xuan1);
+            this.tabPage7.Location = new System.Drawing.Point(4, 25);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(1240, 736);
+            this.tabPage7.TabIndex = 6;
+            this.tabPage7.Text = "批量压缩包校对";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("宋体", 15F);
+            this.label13.Location = new System.Drawing.Point(8, 125);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(262, 25);
+            this.label13.TabIndex = 35;
+            this.label13.Text = "请选择您需要的功能：";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.Font = new System.Drawing.Font("宋体", 14F);
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "仅校验目录1下压缩包文件名数字连续性",
+            "对比目录1和目录2的压缩包数量、文件名是否一致",
+            "查询在目录1中断开连续的压缩包是否存在目录2"});
+            this.comboBox1.Location = new System.Drawing.Point(294, 117);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(675, 31);
+            this.comboBox1.TabIndex = 34;
+            // 
+            // xuan2
+            // 
+            this.xuan2.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.xuan2.Location = new System.Drawing.Point(1109, 63);
+            this.xuan2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.xuan2.Name = "xuan2";
+            this.xuan2.Size = new System.Drawing.Size(108, 36);
+            this.xuan2.TabIndex = 33;
+            this.xuan2.Text = "选择目录";
+            this.xuan2.UseVisualStyleBackColor = true;
+            this.xuan2.Click += new System.EventHandler(this.xuan2_Click);
+            // 
+            // dir2
+            // 
+            this.dir2.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dir2.Location = new System.Drawing.Point(12, 64);
+            this.dir2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dir2.Name = "dir2";
+            this.dir2.Size = new System.Drawing.Size(1071, 36);
+            this.dir2.TabIndex = 32;
+            this.dir2.Text = "目录2";
+            // 
+            // qingli
+            // 
+            this.qingli.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.qingli.Location = new System.Drawing.Point(975, 109);
+            this.qingli.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.qingli.Name = "qingli";
+            this.qingli.Size = new System.Drawing.Size(108, 50);
+            this.qingli.TabIndex = 30;
+            this.qingli.Text = "清除结果";
+            this.qingli.UseVisualStyleBackColor = true;
+            this.qingli.Click += new System.EventHandler(this.qingli_Click);
+            // 
+            // dir1
+            // 
+            this.dir1.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dir1.Location = new System.Drawing.Point(12, 15);
+            this.dir1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dir1.Name = "dir1";
+            this.dir1.Size = new System.Drawing.Size(1071, 36);
+            this.dir1.TabIndex = 26;
+            this.dir1.Text = "目录1";
+            // 
+            // scanjieguo2
+            // 
+            this.scanjieguo2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.scanjieguo2.Location = new System.Drawing.Point(6, 174);
+            this.scanjieguo2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.scanjieguo2.Multiline = true;
+            this.scanjieguo2.Name = "scanjieguo2";
+            this.scanjieguo2.ReadOnly = true;
+            this.scanjieguo2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.scanjieguo2.Size = new System.Drawing.Size(1228, 547);
+            this.scanjieguo2.TabIndex = 28;
+            this.scanjieguo2.Text = "检测结果将会出现在这里。当前状态：空闲\r\n\r\n";
+            // 
+            // runScan
+            // 
+            this.runScan.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.runScan.Location = new System.Drawing.Point(1109, 109);
+            this.runScan.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.runScan.Name = "runScan";
+            this.runScan.Size = new System.Drawing.Size(108, 50);
+            this.runScan.TabIndex = 29;
+            this.runScan.Text = "开始扫描";
+            this.runScan.UseVisualStyleBackColor = true;
+            this.runScan.Click += new System.EventHandler(this.runScan_Click);
+            // 
+            // xuan1
+            // 
+            this.xuan1.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.xuan1.Location = new System.Drawing.Point(1109, 15);
+            this.xuan1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.xuan1.Name = "xuan1";
+            this.xuan1.Size = new System.Drawing.Size(108, 36);
+            this.xuan1.TabIndex = 27;
+            this.xuan1.Text = "选择目录";
+            this.xuan1.UseVisualStyleBackColor = true;
+            this.xuan1.Click += new System.EventHandler(this.xuan1_Click);
+            // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.label12);
+            this.tabPage6.Controls.Add(this.label11);
+            this.tabPage6.Controls.Add(this.label10);
+            this.tabPage6.Controls.Add(this.textBox9);
+            this.tabPage6.Controls.Add(this.textBox8);
+            this.tabPage6.Controls.Add(this.textBox7);
+            this.tabPage6.Controls.Add(this.copyKey);
             this.tabPage6.Controls.Add(this.MagicZ);
             this.tabPage6.Controls.Add(this.label9);
             this.tabPage6.Controls.Add(this.label3);
@@ -654,10 +803,111 @@ namespace 格式助手
             this.tabPage6.Text = "键盘宏";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("宋体", 16F);
+            this.label12.Location = new System.Drawing.Point(197, 312);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(147, 27);
+            this.label12.TabIndex = 26;
+            this.label12.Text = "键变成剪切";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("宋体", 16F);
+            this.label11.Location = new System.Drawing.Point(197, 225);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(147, 27);
+            this.label11.TabIndex = 25;
+            this.label11.Text = "键变成全选";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("宋体", 16F);
+            this.label10.Location = new System.Drawing.Point(197, 144);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(147, 27);
+            this.label10.TabIndex = 24;
+            this.label10.Text = "键变成粘贴";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Enabled = false;
+            this.textBox9.Font = new System.Drawing.Font("宋体", 16F);
+            this.textBox9.Location = new System.Drawing.Point(68, 309);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(100, 38);
+            this.textBox9.TabIndex = 23;
+            this.textBox9.Text = "F4";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Enabled = false;
+            this.textBox8.Font = new System.Drawing.Font("宋体", 16F);
+            this.textBox8.Location = new System.Drawing.Point(68, 222);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(100, 38);
+            this.textBox8.TabIndex = 22;
+            this.textBox8.Text = "F3";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Enabled = false;
+            this.textBox7.Font = new System.Drawing.Font("宋体", 16F);
+            this.textBox7.Location = new System.Drawing.Point(68, 141);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(100, 38);
+            this.textBox7.TabIndex = 21;
+            this.textBox7.Text = "F2";
+            // 
+            // copyKey
+            // 
+            this.copyKey.Enabled = false;
+            this.copyKey.Font = new System.Drawing.Font("宋体", 16F);
+            this.copyKey.Location = new System.Drawing.Point(68, 67);
+            this.copyKey.Name = "copyKey";
+            this.copyKey.Size = new System.Drawing.Size(100, 38);
+            this.copyKey.TabIndex = 20;
+            this.copyKey.Text = "F1";
+            // 
+            // MagicZ
+            // 
+            this.MagicZ.AutoSize = true;
+            this.MagicZ.Font = new System.Drawing.Font("宋体", 16F);
+            this.MagicZ.ForeColor = System.Drawing.Color.Red;
+            this.MagicZ.Location = new System.Drawing.Point(270, 381);
+            this.MagicZ.Name = "MagicZ";
+            this.MagicZ.Size = new System.Drawing.Size(93, 27);
+            this.MagicZ.TabIndex = 16;
+            this.MagicZ.Text = "未运行";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("宋体", 16F);
+            this.label9.Location = new System.Drawing.Point(63, 381);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(201, 27);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "功能当前状态：";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("宋体", 16F);
+            this.label3.Location = new System.Drawing.Point(197, 70);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(147, 27);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "键变成复制";
+            // 
             // Magic
             // 
             this.Magic.Font = new System.Drawing.Font("宋体", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.Magic.Location = new System.Drawing.Point(68, 264);
+            this.Magic.Location = new System.Drawing.Point(68, 487);
             this.Magic.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Magic.Name = "Magic";
             this.Magic.Size = new System.Drawing.Size(295, 79);
@@ -665,37 +915,6 @@ namespace 格式助手
             this.Magic.Text = "启动/关闭";
             this.Magic.UseVisualStyleBackColor = true;
             this.Magic.Click += new System.EventHandler(this.Magic_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("宋体", 16F);
-            this.label3.Location = new System.Drawing.Point(63, 54);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(420, 27);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "把tab键变成复制，win键变成粘贴";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("宋体", 16F);
-            this.label9.Location = new System.Drawing.Point(63, 141);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(201, 27);
-            this.label9.TabIndex = 15;
-            this.label9.Text = "功能当前状态：";
-            // 
-            // MagicZ
-            // 
-            this.MagicZ.AutoSize = true;
-            this.MagicZ.Font = new System.Drawing.Font("宋体", 16F);
-            this.MagicZ.ForeColor = System.Drawing.Color.Red;
-            this.MagicZ.Location = new System.Drawing.Point(270, 141);
-            this.MagicZ.Name = "MagicZ";
-            this.MagicZ.Size = new System.Drawing.Size(93, 27);
-            this.MagicZ.TabIndex = 16;
-            this.MagicZ.Text = "未运行";
             // 
             // Form1
             // 
@@ -723,6 +942,8 @@ namespace 格式助手
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tabControl1.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
+            this.tabPage7.PerformLayout();
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
             this.ResumeLayout(false);
@@ -780,6 +1001,23 @@ namespace 格式助手
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button Magic;
+        private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.Button qingli;
+        private System.Windows.Forms.TextBox dir1;
+        private System.Windows.Forms.TextBox scanjieguo2;
+        private System.Windows.Forms.Button runScan;
+        private System.Windows.Forms.Button xuan1;
+        private System.Windows.Forms.Button xuan2;
+        private System.Windows.Forms.TextBox dir2;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox copyKey;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

@@ -152,8 +152,10 @@ V2.0
 修复了文字转换偶尔不转换“月”“日”的问题。为批量压缩包检测新增压缩包内文本文件命名规范检测，优化文本编号与压缩包编号比对，使其完全精准。
 2023.12.05
 V2.1
-添加了”键盘宏“功能。能更简单地触发系统全局的”复制“”粘贴“功能，解放小手指。修复了批量压缩包检测中可能会触发的一些操作异常。
-</value>
+添加了”键盘宏“功能。能更简单地触发系统全局的”复制“”粘贴“功能，解放小手指。修复了批量压缩包检测中可能会触发的一些操作异常。为关闭按钮添加防误关功能。
+2023.12.11
+V2.2
+添加了批量压缩包校对功能，可以查找有几个空包，或查询空包是否正确。优化文字转换，现在可以去除文本中的换行。为键盘宏添加“全选”和“剪切”功能。屏蔽了窗口最大化按钮，防止误触。</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

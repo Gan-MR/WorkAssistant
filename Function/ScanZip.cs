@@ -17,6 +17,15 @@ namespace 工作助手.Function
         {
             outputBuilder = new StringBuilder();
         }
+        private void AppendOutput(string text)
+        {
+            outputBuilder.AppendLine(text);
+            bugjisu++;
+        }
+        public string GetOutput()
+        {
+            return outputBuilder.ToString();
+        }
 
         public void ScanDirectory(string directoryPath, bool CheckTxtData)
         {
@@ -335,14 +344,6 @@ namespace 工作助手.Function
             return true;
         }*/
 
-        private void AppendOutput(string text)
-        {
-            outputBuilder.AppendLine(text);
-            bugjisu++;
-        }
-        public string GetOutput()
-        {
-            return outputBuilder.ToString();
-        }
+        
     }
 }

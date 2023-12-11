@@ -36,15 +36,13 @@ namespace 工作助手.Function
                         XSSFWorkbook workbook = new XSSFWorkbook(fs);
                         XSSFSheet sheet = (XSSFSheet)workbook.GetSheetAt(0); // 获取第一个工作表
 
-                        SemaphoreSlim semaphore = new SemaphoreSlim(999); // 限制并行验证的线程数量为10
+                        SemaphoreSlim semaphore = new SemaphoreSlim(999); // 限制并行验证的线程数量
 
                         for (int i = startRow - 1; i < endRow; i++)
                         {
                             await semaphore.WaitAsync(); // 等待信号量
                             try
                             {
-
-
                                 cancellationTokenSource.Token.ThrowIfCancellationRequested(); // 检查是否取消
                                 await Task.Run(async () =>
                                 {
