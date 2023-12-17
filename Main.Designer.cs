@@ -412,6 +412,7 @@ namespace 格式助手
             // 
             // dirtext
             // 
+            this.dirtext.AllowDrop = true;
             this.dirtext.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.dirtext.Location = new System.Drawing.Point(11, 25);
             this.dirtext.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -419,6 +420,8 @@ namespace 格式助手
             this.dirtext.Size = new System.Drawing.Size(1222, 36);
             this.dirtext.TabIndex = 7;
             this.dirtext.Text = "输入或选择压缩包集目录";
+            this.dirtext.DragDrop += new System.Windows.Forms.DragEventHandler(this.dirtext_DragDrop);
+            this.dirtext.DragEnter += new System.Windows.Forms.DragEventHandler(this.dirtext_DragEnter);
             // 
             // jieguo
             // 
@@ -487,9 +490,9 @@ namespace 格式助手
             // QuotationMark
             // 
             this.QuotationMark.Font = new System.Drawing.Font("宋体", 16F);
-            this.QuotationMark.Location = new System.Drawing.Point(1031, 210);
+            this.QuotationMark.Location = new System.Drawing.Point(1031, 215);
             this.QuotationMark.Name = "QuotationMark";
-            this.QuotationMark.Size = new System.Drawing.Size(203, 50);
+            this.QuotationMark.Size = new System.Drawing.Size(203, 45);
             this.QuotationMark.TabIndex = 21;
             this.QuotationMark.Text = "+-中文引号";
             this.QuotationMark.UseVisualStyleBackColor = true;
@@ -498,9 +501,9 @@ namespace 格式助手
             // FrenchQuotes
             // 
             this.FrenchQuotes.Font = new System.Drawing.Font("宋体", 16F);
-            this.FrenchQuotes.Location = new System.Drawing.Point(812, 210);
+            this.FrenchQuotes.Location = new System.Drawing.Point(812, 215);
             this.FrenchQuotes.Name = "FrenchQuotes";
-            this.FrenchQuotes.Size = new System.Drawing.Size(213, 50);
+            this.FrenchQuotes.Size = new System.Drawing.Size(213, 45);
             this.FrenchQuotes.TabIndex = 20;
             this.FrenchQuotes.Text = "+-中文书名号";
             this.FrenchQuotes.UseVisualStyleBackColor = true;
@@ -696,7 +699,8 @@ namespace 格式助手
             this.comboBox1.Items.AddRange(new object[] {
             "仅校验目录1下压缩包文件名数字连续性",
             "对比目录1和目录2的压缩包数量、文件名是否一致",
-            "查询在目录1中断开连续的压缩包是否存在目录2"});
+            "查询在目录1中断开连续的压缩包是否存在目录2",
+            "将目录1和目录2的压缩包名与表格的A列对比"});
             this.comboBox1.Location = new System.Drawing.Point(294, 117);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(675, 31);
@@ -920,12 +924,15 @@ namespace 格式助手
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1249, 768);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "工作助手V2.1（技术预览版）";
+            this.Text = "工作助手V2.3（技术预览版）";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();

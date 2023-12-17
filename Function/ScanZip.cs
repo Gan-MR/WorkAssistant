@@ -87,7 +87,7 @@ namespace 工作助手.Function
                     if (textFileEntry == null)
                     {
                         AppendOutput(Path.GetFileName(zipFilePath) + " - 没有找到文本文件。");
-                        //return;
+                        return;
                     }
 
                     // 检查文本文件的行数是否与图片文件的数量匹配
@@ -118,7 +118,7 @@ namespace 工作助手.Function
                     // 检查压缩包内是否至少包含四个图片文件
                     if (imageCount < 4)
                     {
-                        AppendOutput(Path.GetFileName(zipFilePath) + " - 包含少于4个图片文件。");
+                        AppendOutput(Path.GetFileName(zipFilePath) + " - 所包含的.jpg图片少于4个。");
                         //return;
                     }
 
@@ -163,9 +163,9 @@ namespace 工作助手.Function
                     //AppendOutput(Path.GetFileName(zipFilePath)+" - 通过所有检查。");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AppendOutput(string.Format("扫描压缩包 " + Path.GetFileName(zipFilePath) + " 时出现错误：" + ex.Message + "\r\n可能该压缩包没有符合规格的文件或者没有授予访问权限"));
+                AppendOutput("扫描压缩包 " + Path.GetFileName(zipFilePath) + " 时出现错误：可能该压缩包没有符合规格的文件或者没有授予访问权限");
             }
 
 
@@ -182,7 +182,7 @@ namespace 工作助手.Function
                 {
                     if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
                     {
-                        using (StreamReader reader = new StreamReader(entry.Open(), Encoding.Default))
+                        using (StreamReader reader = new StreamReader(entry.Open(), Encoding.UTF8))
                         {
                             int lineIndex = 0;
                             string line;
@@ -209,7 +209,6 @@ namespace 工作助手.Function
                                 // 检测文本中是否包含空格
                                 CheckAndAppendOutput(zipFile, lineIndex, line, " ", "空格");
                                 CheckAndAppendOutput(zipFile, lineIndex, line, "小编", "小编");
-                                CheckAndAppendOutput(zipFile, lineIndex, line, "笔者", "笔者");
                                 CheckAndAppendOutput(zipFile, lineIndex, line, "?", "英文问号（?）");
                             }
 
@@ -265,15 +264,23 @@ namespace 工作助手.Function
 
         private void CheckNestedZipFiles(string zipFile)//检测是否存在嵌套压缩包
         {
+            bool nestedZipFound = false; // 用于标记是否找到嵌套压缩包
+
             using (ZipArchive archive = ZipFile.OpenRead(zipFile))
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     if (entry.FullName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
                     {
-                        AppendOutput($"{Path.GetFileName(zipFile)} - 存在嵌套压缩包: {entry.Name}");
+                        nestedZipFound = true;
+                        break; // 如果找到嵌套压缩包，立即退出循环
                     }
                 }
+            }
+
+            if (nestedZipFound)
+            {
+                AppendOutput($"{Path.GetFileName(zipFile)} - 存在嵌套压缩包");
             }
         }
 
@@ -344,6 +351,6 @@ namespace 工作助手.Function
             return true;
         }*/
 
-        
+
     }
 }

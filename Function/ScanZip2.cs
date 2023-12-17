@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +45,7 @@ namespace 工作助手.Function
                 { CompareZipFiles(dir1, dir2); }
                 else
                 {
-                    AppendOutput("目录1或目录2：找不到这个位置");
+                    AppendOutput("目录1或目录2：找不到位置");
                 }
 
             }
@@ -53,12 +55,15 @@ namespace 工作助手.Function
                 { CompareZipFilesInDirectories(dir1, dir2); }
                 else
                 {
-                    AppendOutput("目录1或目录2：找不到这个位置");
+                    AppendOutput("目录1或目录2：找不到位置");
                 }
+            }
+            else if (functionIndex == 3)
+            {
+
             }
 
         }
-
 
         public void CheckZipFiles(string directoryPath)
         {
@@ -111,8 +116,6 @@ namespace 工作助手.Function
             }
 
         }
-
-
         public void CompareZipFiles(string directoryPath1, string directoryPath2)
         {
             // 获取两个目录下的压缩包文件
@@ -124,15 +127,15 @@ namespace 工作助手.Function
             {
                 if (zipFiles1.Length > zipFiles2.Length)
                 {
-                    AppendOutput("目录1的文件比目录2多");
+                    AppendOutput($"目录1的文件比目录2多,目录1有 {zipFiles1.Length} 个文件。目录2有 {zipFiles2.Length} 个文件。");
                 }
                 else if (zipFiles1.Length < zipFiles2.Length)
                 {
-                    AppendOutput("目录2的文件比目录1多");
+                    AppendOutput($"目录2的文件比目录1多,目录1有 {zipFiles1.Length} 个文件。目录2有 {zipFiles2.Length} 个文件。");
                 }
                 else
                 {
-                    AppendOutput("目录1的文件数量与目录2一致");
+                    AppendOutput($"目录1的文件数量与目录2一致,都有 {zipFiles1.Length} 个文件。");
                 }
             }
 
@@ -156,8 +159,6 @@ namespace 工作助手.Function
                 }
             }
         }
-
-
 
         public void CompareZipFilesInDirectories(string directory1, string directory2)
         {
@@ -212,6 +213,78 @@ namespace 工作助手.Function
             }
         }
 
+        public void CompareDataWithZipFile(string xlsPath, string specifiedColumn, List<string> fileDirectories)
+        {
+            int totalZipFilesFound;//扫描总量
+            int queshiliang = 0;//缺失量
+            List<string> columnData = new List<string>();
+            string xlsLine;
+            
+
+            // 打开用户输入的xls表格
+            using (FileStream file = new FileStream(xlsPath, FileMode.Open, FileAccess.Read))
+            {
+                XSSFWorkbook workbook = new XSSFWorkbook(file);
+                ISheet sheet = workbook.GetSheetAt(0);
+
+                // 获取用户指定列的所有数据
+                int columnIndex = specifiedColumn[0] - 'A';
+                
+                for (int i = 0; i <= sheet.LastRowNum; i++)
+                {
+                    IRow row = sheet.GetRow(i);
+                    if (row != null && row.GetCell(columnIndex) != null)
+                    {
+                        columnData.Add(row.GetCell(columnIndex).StringCellValue);
+                    }
+                }
+
+                List<string> allZipFileNames = new List<string>();
+                bool houxu = true;//有效目录标识
+                xlsLine = columnData.Count.ToString();
+                // 遍历文件目录
+                foreach (string directory in fileDirectories)
+                {
+                    if (Directory.Exists(directory))
+                    {
+                        string[] zipFiles = Directory.GetFiles(directory, "*.zip");
+                        allZipFileNames.AddRange(zipFiles.Select(Path.GetFileNameWithoutExtension));
+                        houxu = false;
+                    }
+                    else
+                    {
+                        // 输出文件目录不存在
+                        AppendOutput($"{directory} :找不到这个目录");
+                    }
+                }
+
+                if (houxu) return;//一个有效目录都没有就不干了。
+                totalZipFilesFound = allZipFileNames.Count;
+                foreach (string data in columnData)
+                {
+                    bool foundInFiles = false;
+                    foreach (string zipFileName in allZipFileNames)
+                    {
+                        if (zipFileName.Contains(data) || data.Contains(zipFileName))
+                        {
+                            foundInFiles = true;
+                            break;
+                        }
+                        
+                    }
+                    if (!foundInFiles)
+                    {
+                        // 输出对应的数据
+                        AppendOutput($"表格中的数据 {data} 没有匹配的压缩包文件名");
+                        queshiliang++;
+                    }
+                }            
+            }
+            AppendOutput($"所选表格A列有 {xlsLine} 行数据。本次扫描了 {totalZipFilesFound} 个压缩包。缺失 {queshiliang} 个压缩包");
+        }
+
+
+
 
 
 
@@ -222,4 +295,5 @@ namespace 工作助手.Function
 
     }
 }
+
 

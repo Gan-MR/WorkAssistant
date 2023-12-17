@@ -14,11 +14,10 @@ namespace 格式助手
         public Form1()
         {
             InitializeComponent();
-            KeyPreview = true; // 允许窗体接收键盘事件
             KeyDown += MyForm_KeyDown; // 自定义的KeyDown彩蛋事件处理方法
             FormClosing += new FormClosingEventHandler(Form1_FormClosing);// 自定义的Form1_FormClosing事件处理方法（防误关）
             copyKey.KeyDown += new KeyEventHandler(_copyKey);//键盘宏功能绑定
-            MaximizeBox = false;//拒绝窗口最大化
+
         }
 
         private void Form1_Load(object sender, EventArgs e)//开窗时
@@ -242,25 +241,13 @@ namespace 格式助手
 
         private void xuan_Click(object sender, EventArgs e)//选表格
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                openFileDialog.Filter = "Excel文件 (*.xlsx)|*.xlsx|所有文件 (*.*)|*.*";
-                openFileDialog.FilterIndex = 1;
-                openFileDialog.RestoreDirectory = true;
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string selectedFilePath = openFileDialog.FileName;
-                    // 在这里处理选择的文件路径
-                    xlsDir.Text = selectedFilePath;
-                }
-            }
+            xlsDir.Text= Misc.xuanbiaoge();
         }
-        private void clear_Xls_Click(object sender, EventArgs e)
+        private void clear_Xls_Click(object sender, EventArgs e)//清除按钮
         {
             textBox5.Text = "检测结果将会出现在这里。当前状态：空闲\r\n目前可以检测链接是否能正常打开";
         }
-        private void btn_stopScanXls_Click(object sender, EventArgs e)
+        private void btn_stopScanXls_Click(object sender, EventArgs e)//停止扫描
         {
             ScanXls.cancellationTokenSource.Cancel();
         }
@@ -280,28 +267,39 @@ namespace 格式助手
 
         private void runScan_Click(object sender, EventArgs e)
         {
-            
-            if (comboBox1.SelectedIndex != -1)
+            ScanZip2 scanZip2 = new ScanZip2();
+            if (comboBox1.SelectedIndex == 3) 
             {
-                ScanZip2 scanZip2 = new ScanZip2();
-                scanZip2.CheckZip(dir1.Text,dir2.Text, comboBox1.SelectedIndex);
+                string biaoge = Misc.xuanbiaoge();
+                List<string> dir= new List<string>();
+                dir.Add(dir1.Text);
+                dir.Add(dir2.Text);
+                scanjieguo2.Text = "选择的表格是："+ biaoge;
+                if(biaoge != "")
+                scanZip2.CompareDataWithZipFile(biaoge, "A", dir);
+                scanjieguo2.Text = scanZip2.GetOutput();
+            }
+            else if (comboBox1.SelectedIndex != -1)
+            {
+                
+                scanZip2.CheckZip(dir1.Text, dir2.Text, comboBox1.SelectedIndex);
                 scanjieguo2.Text = scanZip2.GetOutput();
             }
             else
             {
                 scanjieguo2.Text = "没有选择功能";
             }
-            
+
         }
 
-        private void qingli_Click(object sender, EventArgs e)
+        private void qingli_Click(object sender, EventArgs e)//清除结果
         {
             scanjieguo2.Text = "检测结果将会出现在这里。当前状态：空闲";
         }
         //批量压缩包校验End-----------------------------
         //键盘宏Start----------------------
         bool MagicT = true;
-        
+
         private void Magic_Click(object sender, EventArgs e)
         {
             if (MagicT)
@@ -352,7 +350,7 @@ namespace 格式助手
             }
         }
         //Win7文本框全选兼容性代码End-------------------------------
-        //更多功能。。。。。。。。。
+        
 
         //彩蛋
         private void MyForm_KeyDown(object sender, KeyEventArgs e)//彩蛋
@@ -363,6 +361,29 @@ namespace 格式助手
             }
         }
 
-        
+        //拖动放置文件目录Start------------------------------
+        private void dirtext_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void dirtext_DragDrop(object sender, DragEventArgs e)
+        {
+            // 获取拖放的文件夹路径
+            string[] folders = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (folders.Length > 0 && Directory.Exists(folders[0]))
+            {
+                dirtext.Text = folders[0];
+            }
+        }
+        //拖动放置文件目录End------------------------------
+
     }
 }

@@ -211,7 +211,7 @@ namespace 工作助手.Function
         }
         public static string RemoveSpecialSymbols(string input, string substitution)
         {
-            string rt=input;
+            string rt = input;
             
             rt = Regex.Replace(rt ,":", "："); // 冒号
             rt = Regex.Replace(rt, ",", "，");// 逗号
@@ -225,7 +225,11 @@ namespace 工作助手.Function
             rt = Regex.Replace(rt, " ", "");//去除空格
             rt = Regex.Replace(rt, @"(?<!\d)\.(?!\d)", "。");//前后无数字的.替换。 
             rt = Regex.Replace(rt, @"(\d)，(\d)", "$1$2");//去除夹在数字中的中文逗号
-            rt = Regex.Replace(rt, @"[" + substitution + "]+", "");// 删除特殊符号
+            foreach (char c in substitution)
+            {
+                rt = rt.Replace(c.ToString(), "");//清理用户输入的字符
+            }
+
             return rt;
         }
     }
