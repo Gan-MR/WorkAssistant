@@ -168,6 +168,7 @@ namespace 工作助手.Function
             string[] zipFilesInDirectory1 = Directory.GetFiles(directory1, "*.zip");
             string firstLetter = "";
             string name = "";
+            int queshi = 0;
             List<string> missingZipFileNames = new List<string>();
             foreach (string zipFile in zipFilesInDirectory1)
             {
@@ -192,6 +193,7 @@ namespace 工作助手.Function
                 {
                     string zipFileName = firstLetter + j + name + ".zip";
                     missingZipFileNames.Add(zipFileName);
+                    queshi++;
                 }
 
             }
@@ -199,18 +201,21 @@ namespace 工作助手.Function
             // 在目录2下比对是否存在这些压缩包
             string[] zipFilesInDirectory2 = Directory.GetFiles(directory2, "*.zip");
             List<string> existingZipFileNames = new List<string>(zipFilesInDirectory2.Select(Path.GetFileName));
+            int queshiZip = 0;//缺失的压缩包
 
             foreach (string missingZipFileName in missingZipFileNames)
             {
                 if (existingZipFileNames.Contains(missingZipFileName))
                 {
-                    AppendOutput("目录1缺失的" + missingZipFileName + "存在于目录2");
+                    AppendOutput($"目录1缺失的 {missingZipFileName} 存在于目录2");
+                    queshiZip++;
                 }
                 else
                 {
-                    AppendOutput("目录2下不存在压缩包：" + missingZipFileName);
+                    AppendOutput($"目录2下不存在压缩包： {missingZipFileName}");
                 }
             }
+            AppendOutput($"目录1中含有 {zipFilesInDirectory1.Length} 个压缩包，目录2中含有 {zipFilesInDirectory2.Length} 个压缩包 ，缺失了 {queshi} 个压缩包，找到了 {queshiZip} 个缺失的压缩包。");
         }
 
         public void CompareDataWithZipFile(string xlsPath, string specifiedColumn, List<string> fileDirectories)
@@ -254,7 +259,7 @@ namespace 工作助手.Function
                     else
                     {
                         // 输出文件目录不存在
-                        AppendOutput($"{directory} :找不到这个目录");
+                        AppendOutput($"目录 “{directory}” :找不到这个目录");
                     }
                 }
 

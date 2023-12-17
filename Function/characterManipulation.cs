@@ -221,7 +221,12 @@ namespace 工作助手.Function
             rt = Regex.Replace(rt, "；", "。");//中文分号转句号
             rt = Regex.Replace(rt, ";", "。");//英文分号转句号
 
-            rt = Regex.Replace(rt, @"\n", "");// 去除换行
+            rt = Regex.Replace(rt, "……", "。");//省略号转句号
+            rt = Regex.Replace(rt, "…", "。");//省略号转句号
+
+
+            rt = Regex.Replace(rt, @"\n", "");// 去除回车
+            rt = Regex.Replace(rt, @"\r", "");// 去除换行
             rt = Regex.Replace(rt, " ", "");//去除空格
             rt = Regex.Replace(rt, @"(?<!\d)\.(?!\d)", "。");//前后无数字的.替换。 
             rt = Regex.Replace(rt, @"(\d)，(\d)", "$1$2");//去除夹在数字中的中文逗号

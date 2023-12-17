@@ -127,6 +127,7 @@ namespace 格式助手
             this.textBox4.Location = new System.Drawing.Point(8, 6);
             this.textBox4.Multiline = true;
             this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
             this.textBox4.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox4.Size = new System.Drawing.Size(1225, 724);
             this.textBox4.TabIndex = 1;
@@ -150,6 +151,7 @@ namespace 格式助手
             this.textBox3.Location = new System.Drawing.Point(8, 6);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
             this.textBox3.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox3.Size = new System.Drawing.Size(1225, 724);
             this.textBox3.TabIndex = 0;
@@ -526,7 +528,7 @@ namespace 格式助手
             this.Substitution.Name = "Substitution";
             this.Substitution.Size = new System.Drawing.Size(421, 30);
             this.Substitution.TabIndex = 18;
-            this.Substitution.Text = "[]『』\"‘’{}~:;@\\#￥……&<>?「」";
+            this.Substitution.Text = "[]『』\"‘’{}~:;@\\#￥&<>?「」";
             // 
             // label1
             // 
@@ -567,9 +569,9 @@ namespace 格式助手
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(416, 158);
             this.label2.TabIndex = 14;
-            this.label2.Text = "简要说明：\r\n1、数字日期转大写会把文本中的数字日期全部转成中文大写。“月”“日”前面的数字不应该超过31，如果超过则会替换成十一。\r\n2、特殊符号处理会删除以上" +
-    "文本框内包含的符号以及换行符、空格，并且将分号转换成句号，并且会将英文的冒号逗号问号感叹号换成中文符号。当 . 前后有数字时不会被替换 。\r\n3、就是清理括号，" +
-    "连同括号中的文本。";
+            this.label2.Text = "简要说明：\r\n1、数字日期转大写会把文本中的数字日期全部转成中文大写。“月”“日”前面的数字不应该超过31，如果超过则会替换成十一。\r\n2、特殊符号处理会删除换行" +
+    "符和空格和以上文本框内包含的符号。分号和省略号会转换成句号，并且会将英文的冒号逗号问号感叹号换成中文符号。当 . 前后有数字时不会被替换 。\r\n3、就是清理括号" +
+    "，连同括号中的文本。";
             // 
             // CopyText2
             // 
@@ -720,6 +722,7 @@ namespace 格式助手
             // 
             // dir2
             // 
+            this.dir2.AllowDrop = true;
             this.dir2.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.dir2.Location = new System.Drawing.Point(12, 64);
             this.dir2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -727,6 +730,8 @@ namespace 格式助手
             this.dir2.Size = new System.Drawing.Size(1071, 36);
             this.dir2.TabIndex = 32;
             this.dir2.Text = "目录2";
+            this.dir2.DragDrop += new System.Windows.Forms.DragEventHandler(this.dir2_DragDrop);
+            this.dir2.DragEnter += new System.Windows.Forms.DragEventHandler(this.dir2_DragEnter);
             // 
             // qingli
             // 
@@ -742,6 +747,7 @@ namespace 格式助手
             // 
             // dir1
             // 
+            this.dir1.AllowDrop = true;
             this.dir1.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.dir1.Location = new System.Drawing.Point(12, 15);
             this.dir1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -749,6 +755,8 @@ namespace 格式助手
             this.dir1.Size = new System.Drawing.Size(1071, 36);
             this.dir1.TabIndex = 26;
             this.dir1.Text = "目录1";
+            this.dir1.DragDrop += new System.Windows.Forms.DragEventHandler(this.dir1_DragDrop);
+            this.dir1.DragEnter += new System.Windows.Forms.DragEventHandler(this.dir1_DragEnter);
             // 
             // scanjieguo2
             // 
@@ -932,7 +940,7 @@ namespace 格式助手
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "工作助手V2.3（技术预览版）";
+            this.Text = "工作助手V2.4（技术预览版）";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();

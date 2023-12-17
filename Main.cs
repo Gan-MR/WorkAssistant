@@ -274,10 +274,10 @@ namespace 格式助手
                 List<string> dir= new List<string>();
                 dir.Add(dir1.Text);
                 dir.Add(dir2.Text);
-                scanjieguo2.Text = "选择的表格是："+ biaoge;
+                scanjieguo2.Text = "选择的表格是："+ biaoge+"\r\n";
                 if(biaoge != "")
                 scanZip2.CompareDataWithZipFile(biaoge, "A", dir);
-                scanjieguo2.Text = scanZip2.GetOutput();
+                scanjieguo2.Text += scanZip2.GetOutput();
             }
             else if (comboBox1.SelectedIndex != -1)
             {
@@ -381,6 +381,50 @@ namespace 格式助手
             if (folders.Length > 0 && Directory.Exists(folders[0]))
             {
                 dirtext.Text = folders[0];
+            }
+        }
+
+        private void dir1_DragDrop(object sender, DragEventArgs e)
+        {
+            // 获取拖放的文件夹路径
+            string[] folders = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (folders.Length > 0 && Directory.Exists(folders[0]))
+            {
+                dir1.Text = folders[0];
+            }
+        }
+
+        private void dir1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void dir2_DragDrop(object sender, DragEventArgs e)
+        {
+            // 获取拖放的文件夹路径
+            string[] folders = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (folders.Length > 0 && Directory.Exists(folders[0]))
+            {
+                dir2.Text = folders[0];
+            }
+        }
+
+        private void dir2_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
             }
         }
         //拖动放置文件目录End------------------------------
