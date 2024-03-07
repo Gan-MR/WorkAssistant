@@ -70,20 +70,32 @@ namespace 工作助手.Function
         }
 
 
-        public static void GenerateFiles(string text, int number, string filePath)
+        public static void GenerateFiles(string text, int number, string filePath,bool dirOrTxt)
         {
             string prefix = new string(text.TakeWhile(c => !char.IsDigit(c)).ToArray());
             string suffix = new string(text.Reverse().TakeWhile(c => !char.IsDigit(c)).Reverse().ToArray());
             string digits = new string(text.Where(char.IsDigit).ToArray());
             int originalNumber = int.Parse(digits);
-            
-            for (int i = 0; i < number; i++)
+            if (dirOrTxt)
             {
-                string newNumber = (originalNumber + i).ToString();
-                string fileName = prefix + newNumber + suffix + ".txt";
-                File.Create(Path.Combine(filePath, fileName)).Dispose();
-                
+                for (int i = 0; i < number; i++)
+                {
+                    string newNumber = (originalNumber + i).ToString();
+                    string folderName = prefix + newNumber + suffix;
+                    Directory.CreateDirectory(Path.Combine(filePath, folderName));
+                }
             }
+            else
+            {
+                for (int i = 0; i < number; i++)
+                {
+                    string newNumber = (originalNumber + i).ToString();
+                    string fileName = prefix + newNumber + suffix + ".txt";
+                    File.Create(Path.Combine(filePath, fileName)).Dispose();
+
+                }
+            }
+            
         }
 
 
