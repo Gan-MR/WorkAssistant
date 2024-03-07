@@ -87,6 +87,7 @@ namespace 工作助手.Function
             // 校验数字是否连续
             numbers.Sort();//排序
             int missingCount = 0;
+            bool yichang = true;
             for (int i = 1; i < numbers.Count; i++)
             {
                 if (numbers[i] != numbers[i - 1] + 1)
@@ -99,22 +100,33 @@ namespace 工作助手.Function
 
                     int count = numbers[i] - numbers[i - 1] - 1;
                     missingCount += count;
-                    if (count > 70) { AppendOutput("区间异常"); }
+                    if (count > 100)
+                    {
+                        AppendOutput("存在区间异常，可能存在附加的任务或编号错误");
+                        yichang = false;
+
+                    }
                     else
                     {
                         AppendOutput("在 " + Path.GetFileName(prevZipFile) + " 和 " + Path.GetFileName(nextZipFile) + " 之间，缺少 " + count + " 个压缩包");
                     }
                 }
             }
-            if (missingCount != 0)
+            if (yichang)
             {
-                AppendOutput("总共缺少 " + missingCount + " 个压缩包。");
+                if (missingCount != 0)
+                {
+                    AppendOutput("总共缺少 " + missingCount + " 个压缩包。");
+                }
+                else
+                {
+                    AppendOutput("没有找到不连续的压缩包。");
+                }
             }
             else
             {
-                AppendOutput("没有找到不连续的压缩包。");
-            }
 
+            }
         }
         public void CompareZipFiles(string directoryPath1, string directoryPath2)
         {
@@ -160,62 +172,40 @@ namespace 工作助手.Function
             }
         }
 
-        public void CompareZipFilesInDirectories(string directory1, string directory2)
+
+
+        public void CompareZipFilesInDirectories(string folder1, string folder2)
         {
-            // 获取目录1下缺少的压缩包
+            int jisu = 0; int jisu1 = 0;
+            string[] zipFiles1 = Directory.GetFiles(folder1, "*.zip").Select(Path.GetFileNameWithoutExtension).ToArray();
+            string[] zipFiles2 = Directory.GetFiles(folder2, "*.zip").Select(Path.GetFileNameWithoutExtension).ToArray();
+
+            List<int> numbers1 = zipFiles1.Select(file => ExtractNumberFromFileName(file)).ToList();
+            List<int> numbers2 = zipFiles2.Select(file => ExtractNumberFromFileName(file)).ToList();
 
             List<int> missingNumbers = new List<int>();
-            string[] zipFilesInDirectory1 = Directory.GetFiles(directory1, "*.zip");
-            string firstLetter = "";
-            string name = "";
-            int queshi = 0;
-            List<string> missingZipFileNames = new List<string>();
-            foreach (string zipFile in zipFilesInDirectory1)
+            for (int i = numbers1.Min(); i < numbers1.Max(); i++)
             {
-                string fileName = Path.GetFileNameWithoutExtension(zipFile);
-                Match match = Regex.Match(fileName, @"\d+");
-                if (match.Success)
+                if (!numbers1.Contains(i) && !numbers2.Contains(i))
                 {
-                    int number = int.Parse(match.Value);
-                    missingNumbers.Add(number);
+                    missingNumbers.Add(i);
+                    jisu1++;
                 }
             }
 
-            Match match1 = Regex.Match(Path.GetFileNameWithoutExtension(zipFilesInDirectory1[0]), @"[a-zA-Z]");
-            if (match1.Success) { firstLetter = match1.Value[0].ToString(); }
-            MatchCollection matches = Regex.Matches(Path.GetFileNameWithoutExtension(zipFilesInDirectory1[0]), @"[\u4e00-\u9fff]"); // 匹配中文字符的 Unicode 范围
-            foreach (Match match in matches) { name += match.Value; }
 
-            missingNumbers.Sort();//排序
-            for (int i = 1; i < missingNumbers.Count; i++)
+            foreach (var number in missingNumbers)
             {
-                for (int j = missingNumbers[i - 1] + 1; j < missingNumbers[i]; j++)//提取断开的数字
-                {
-                    string zipFileName = firstLetter + j + name + ".zip";
-                    missingZipFileNames.Add(zipFileName);
-                    queshi++;
-                }
-
+                AppendOutput($"目录2中缺少 - {number}");
+                jisu++;
             }
+            AppendOutput($"目录1有 {numbers1.Count} 个压缩包，目录2中有 {numbers2.Count} 个压缩包。缺少 {jisu} 个压缩包");
+        }
 
-            // 在目录2下比对是否存在这些压缩包
-            string[] zipFilesInDirectory2 = Directory.GetFiles(directory2, "*.zip");
-            List<string> existingZipFileNames = new List<string>(zipFilesInDirectory2.Select(Path.GetFileName));
-            int queshiZip = 0;//缺失的压缩包
-
-            foreach (string missingZipFileName in missingZipFileNames)
-            {
-                if (existingZipFileNames.Contains(missingZipFileName))
-                {
-                    AppendOutput($"目录1缺失的 {missingZipFileName} 存在于目录2");
-                    queshiZip++;
-                }
-                else
-                {
-                    AppendOutput($"目录2下不存在压缩包： {missingZipFileName}");
-                }
-            }
-            AppendOutput($"目录1中含有 {zipFilesInDirectory1.Length} 个压缩包，目录2中含有 {zipFilesInDirectory2.Length} 个压缩包 ，缺失了 {queshi} 个压缩包，找到了 {queshiZip} 个缺失的压缩包。");
+        static int ExtractNumberFromFileName(string fileName)
+        {
+            string number = new String(fileName.Where(Char.IsDigit).ToArray());
+            return int.Parse(number);
         }
 
         public void CompareDataWithZipFile(string xlsPath, string specifiedColumn, List<string> fileDirectories)
@@ -224,7 +214,7 @@ namespace 工作助手.Function
             int queshiliang = 0;//缺失量
             List<string> columnData = new List<string>();
             string xlsLine;
-            
+
 
             // 打开用户输入的xls表格
             using (FileStream file = new FileStream(xlsPath, FileMode.Open, FileAccess.Read))
@@ -234,7 +224,7 @@ namespace 工作助手.Function
 
                 // 获取用户指定列的所有数据
                 int columnIndex = specifiedColumn[0] - 'A';
-                
+
                 for (int i = 0; i <= sheet.LastRowNum; i++)
                 {
                     IRow row = sheet.GetRow(i);
@@ -275,7 +265,7 @@ namespace 工作助手.Function
                             foundInFiles = true;
                             break;
                         }
-                        
+
                     }
                     if (!foundInFiles)
                     {
@@ -283,9 +273,10 @@ namespace 工作助手.Function
                         AppendOutput($"表格中的数据 {data} 没有匹配的压缩包文件名");
                         queshiliang++;
                     }
-                }            
+                }
             }
-            AppendOutput($"所选表格A列有 {xlsLine} 行数据。本次扫描了 {totalZipFilesFound} 个压缩包。缺失 {queshiliang} 个压缩包");
+            int xlsLineS = int.Parse(xlsLine);
+            AppendOutput($"所选表格A列有 {xlsLine} 行数据。检测到 {totalZipFilesFound} 个压缩包，匹配了{xlsLineS - queshiliang}个压缩包。缺失 {queshiliang} 个压缩包");
         }
 
 
