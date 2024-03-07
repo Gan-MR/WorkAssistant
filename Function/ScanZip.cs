@@ -27,7 +27,7 @@ namespace 工作助手.Function
             return outputBuilder.ToString();
         }
 
-        public void ScanDirectory(string directoryPath, bool CheckTxtData)
+        public void ScanDirectory(string directoryPath, string keyWord)
         {
             try
             {
@@ -43,11 +43,11 @@ namespace 工作助手.Function
                 foreach (string zipFile in zipFiles)
                 {
                     // 执行扫描操作
-
                     CheckTextFileCountAndImageCount(zipFile);//图片数量>4，文本=1，且文本行数=图片张数，文本第一行少于四个字，文本命名规范【XXX】本题图片文本，文本文件编号与压缩包编号匹配
-                    if (!CheckTxtData)
-                        CheckTextFileContent(zipFile);//压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含空格，笔者，小编，英文问号等关键字
+                    if (keyWord != "")
+                        CheckTextFileContent(zipFile, keyWord);//压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含关键字
                     CheckNestedZipFiles(zipFile);//嵌套压缩包
+
                     zipjisu++;
                 }
                 if (GetOutput().Length == 0)
@@ -94,7 +94,7 @@ namespace 工作助手.Function
                     int imageCount = 0;
                     foreach (ZipArchiveEntry entry in archive.Entries)
                     {
-                        if (!entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                        if (entry.FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
                         {
                             imageCount++;
                         }
@@ -108,7 +108,7 @@ namespace 工作助手.Function
                             reader.ReadLine();
                             lineCount++;
                         }
-                        if (lineCount != imageCount)
+                        if (lineCount < imageCount)
                         {
                             AppendOutput(Path.GetFileName(zipFilePath) + " - 图片与文本行数不符，发现" + imageCount + "个.jpg图片文件，" + lineCount + "行文本。");
                             //return;
@@ -122,7 +122,8 @@ namespace 工作助手.Function
                         //return;
                     }
 
-                    // 检查文本文件的第一行内容是否至少包含4个字符
+                    /*
+                     //检查文本文件的第一行内容是否至少包含4个字符
                     foreach (ZipArchiveEntry entry in archive.Entries)
                     {
                         using (StreamReader reader = new StreamReader(entry.Open(), Encoding.Default))
@@ -135,7 +136,7 @@ namespace 工作助手.Function
 
 
                         }
-                    }
+                    }*/
 
                     // 检查压缩包的文件名是否与文本文件名匹配
                     string archiveName = Path.GetFileNameWithoutExtension(zipFilePath);
@@ -160,6 +161,10 @@ namespace 工作助手.Function
                     {
                         AppendOutput(Path.GetFileName(zipFilePath) + " - 文本文件不符合“【XXX】本题图片文本”命名要求");
                     }
+
+
+
+
                     //AppendOutput(Path.GetFileName(zipFilePath)+" - 通过所有检查。");
                 }
             }
@@ -171,29 +176,72 @@ namespace 工作助手.Function
 
         }
 
-        private void CheckTextFileContent(string zipFile)//压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含空格
+        private void CheckNestedZipFiles(string zipFile)//检测是否存在嵌套压缩包
         {
-            List<string> repeatedLines = new List<string>(); // 用于存储重复的文本行
-            Dictionary<string, List<int>> lineIndexMap = new Dictionary<string, List<int>>(); // 用于存储每个文本行的出现位置
+            bool nestedZipFound = false; // 用于标记是否找到嵌套压缩包
+
+            // 检测压缩包文件名是否包含空格
+            if (Path.GetFileName(zipFile).Contains(" "))
+            {
+                AppendOutput($"{Path.GetFileName(zipFile)} - 压缩包文件名包含空格");
+            }
 
             using (ZipArchive archive = ZipFile.OpenRead(zipFile))
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
+                    if (entry.FullName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                    {
+                        nestedZipFound = true;
+                        break; // 如果找到嵌套压缩包，立即退出循环
+                    }
+                }
+            }
+
+            if (nestedZipFound)
+            {
+                AppendOutput($"{Path.GetFileName(zipFile)} - 存在嵌套压缩包");
+            }
+        }
+
+        private void CheckTextFileContent(string zipFile, string Keyword)
+        /* 压缩包内文本超过17个连续字符相同字符，文本是否为空，是否包含空格
+         * 文本行最后一个字符必须为。！”？
+         * 引号成对。
+         */
+        {
+            List<string> repeatedLines = new List<string>(); // 用于存储重复的文本行
+            Dictionary<string, List<int>> lineIndexMap = new Dictionary<string, List<int>>(); // 用于存储每个文本行的出现位置
+            string[] keyword = Keyword.Split('.');
+
+            using (ZipArchive archive = ZipFile.OpenRead(zipFile))
+            {
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+
+
                     if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
                     {
-                        using (StreamReader reader = new StreamReader(entry.Open(), Encoding.UTF8))
+                        using (StreamReader reader = new StreamReader(entry.Open(), Encoding.Default))
                         {
                             int lineIndex = 0;
                             string line;
-
+                            int lineNumber = 0;
                             bool isEmpty = true; // 用于标记文本文件是否为空
-
+                            string lastLine = null; // 用于存储最后一行的内容
                             while ((line = reader.ReadLine()) != null)
                             {
+                                lineNumber++;
                                 lineIndex++;
                                 isEmpty = false; // 当读取到文本行时，将 isEmpty 标记为 false
 
+                                // 检测引号成对
+                                if (ContainsUnmatchedQuote(line))
+                                {
+                                    AppendOutput($"{Path.GetFileName(zipFile)} - 第 {lineNumber} 行，引号不成对");
+                                }
+
+                                //先判断文字> 17
                                 if (line.Length > 17)
                                 {
                                     if (lineIndexMap.ContainsKey(line))
@@ -205,11 +253,56 @@ namespace 工作助手.Function
                                         lineIndexMap[line] = new List<int> { lineIndex };
                                     }
                                 }
+                                lastLine = line; // 每次读取新的一行时，更新最后一行的内容
 
-                                // 检测文本中是否包含空格
-                                CheckAndAppendOutput(zipFile, lineIndex, line, " ", "空格");
-                                CheckAndAppendOutput(zipFile, lineIndex, line, "小编", "小编");
-                                CheckAndAppendOutput(zipFile, lineIndex, line, "?", "英文问号（?）");
+                                // 检测文本中是否包含。。。。
+                                //CheckAndAppendOutput(压缩包, 所在行, line, "关键字");
+                                for (int i = 0; i < keyword.Length; i++)
+                                {
+                                    CheckAndAppendOutput(zipFile, lineIndex, line, keyword[i]);
+                                }
+
+                                /*
+                                 * 检测文本行(除第一行)的最后一个字是否为！？。”
+                                 * 最后一个字不是中文下引号，那么倒数第二个字则不能是句号，感叹号，问号
+                                 */
+                                if (lineNumber > 1 && line.Length >= 9) // 从第二行开始检测并且只检测文本行长度大于等于9个字符的行
+                                {
+                                    if (!string.IsNullOrEmpty(line))
+                                    {
+                                        char lastChar = line[line.Length - 1];
+                                        if (lastChar != '”')
+                                        {
+                                            char secondLastChar = line.Length > 1 ? line[line.Length - 2] : '\0';
+                                            if (secondLastChar == '。' || secondLastChar == '！' || secondLastChar == '？')
+                                            {
+                                                AppendOutput($"{Path.GetFileName(zipFile)} - 第 {lineNumber} 行，倒数第二个字符为：{secondLastChar}");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            char secondLastChar = line.Length > 1 ? line[line.Length - 2] : '\0';
+                                            string surroundingChars = line.Substring(line.Length - 9, 9);
+                                            if (secondLastChar != '。' && secondLastChar != '！' && secondLastChar != '？')
+                                            {
+                                                AppendOutput($"{Path.GetFileName(zipFile)} - 第 {lineNumber} 行，下引号前没有合理的结束：{surroundingChars}");
+                                            }
+                                        }
+                                    }
+
+                                    if (!string.IsNullOrEmpty(line))
+                                    {
+                                        char lastChar = line[line.Length - 1];
+                                        if (lastChar == '！' || lastChar == '。' || lastChar == '”' || lastChar == '？')
+                                        {
+                                            // 文本行的最后一个字符符合条件
+                                        }
+                                        else
+                                        {
+                                            AppendOutput($"{Path.GetFileName(zipFile)} - 第 {lineNumber} 行，最后一个字符为：{lastChar}");
+                                        }
+                                    }
+                                }
                             }
 
                             // 如果文本文件为空，输出提示信息
@@ -235,121 +328,72 @@ namespace 工作助手.Function
             if (repeatedLines.Count > 0)
             {
                 StringBuilder outputBuilder = new StringBuilder();
-                outputBuilder.AppendLine($"{Path.GetFileName(zipFile)} - 压缩包内存在重复的文本行：");
+                outputBuilder.Append($"{Path.GetFileName(zipFile)} - 存在重复的文本行：");
 
                 foreach (string line in repeatedLines)
                 {
 
                     foreach (int index in lineIndexMap[line])
                     {
-                        outputBuilder.Append("第" + $"{index}" + "行");
+                        outputBuilder.Append("第 " + $"{index}" + " 行 ");
                     }
 
                 }
                 AppendOutput(outputBuilder.ToString());
             }
         }
-
-        private void CheckAndAppendOutput(string zipFile, int lineIndex, string line, string keyword, string message)//外置查找非法内容
+        // 检测引号成对的方法
+        private bool ContainsUnmatchedQuote(string line)
         {
-            if (line.Contains(keyword))
+            int countOpen = 0;
+            int countClose = 0;
+            foreach (char c in line)
             {
-                int startIndex = Math.Max(0, line.IndexOf(keyword) - 8);
-                int endIndex = Math.Min(line.Length, line.IndexOf(keyword) + 8 + 1);
-                string context = line.Substring(startIndex, endIndex - startIndex);
-                AppendOutput($"{Path.GetFileName(zipFile)} - 该压缩包文本的第 {lineIndex} 行包含“{message}”: {context}");
-            }
-        }
-
-
-        private void CheckNestedZipFiles(string zipFile)//检测是否存在嵌套压缩包
-        {
-            bool nestedZipFound = false; // 用于标记是否找到嵌套压缩包
-
-            using (ZipArchive archive = ZipFile.OpenRead(zipFile))
-            {
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                if (c == '“')
                 {
-                    if (entry.FullName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
-                    {
-                        nestedZipFound = true;
-                        break; // 如果找到嵌套压缩包，立即退出循环
-                    }
+                    countOpen++;
+                }
+                else if (c == '”')
+                {
+                    countClose++;
                 }
             }
-
-            if (nestedZipFound)
-            {
-                AppendOutput($"{Path.GetFileName(zipFile)} - 存在嵌套压缩包");
-            }
+            return countOpen != countClose; // 如果开引号数量不等于闭引号数量，则返回 true，表示引号不成对
         }
-
-        /*private void CheckImageTextSpacing(string zipFile)
+        //外置查询关键字
+        private void CheckAndAppendOutput(string zipFile, int lineIndex, string line, string keyword)
         {
-            using (ZipArchive archive = ZipFile.OpenRead(zipFile))
+            Regex regex = new Regex(Regex.Escape(keyword) + "+");
+            Match match = regex.Match(line);
+            if (match.Success)
             {
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                string matchedKeyword = match.Value;
+                int index = 0;
+                while ((index = line.IndexOf(matchedKeyword, index)) != -1)
                 {
-                    if (entry.FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
-                    {
-                        using (var imageStream = entry.Open())
-                        {
-                            using (var image = Image.FromStream(imageStream))
-                            {
-                                var ocrEngine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default);
-                                using (var page = ocrEngine.Process(image, PageSegMode.Auto))
-                                {
-                                    var text = page.GetText();
-                                    var lines = text.Split('\n');
-
-                                    var spacing = GetAverageSpacing(lines);
-
-                                    if (!IsSpacingConsistent(lines, spacing))
-                                    {
-                                        AppendOutput($"{zipFile} - {entry.FullName} - 图片中的文字字间距不一致");
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    int startIndex = Math.Max(0, index - 11);
+                    int endIndex = Math.Min(line.Length, index + matchedKeyword.Length + 11);
+                    string context = line.Substring(startIndex, endIndex - startIndex);
+                    AppendOutput($"{Path.GetFileName(zipFile)} - 第 {lineIndex} 行包含关键字：》{matchedKeyword}《；位置: {context}");
+                    index += matchedKeyword.Length;
                 }
-            }
-        }
-
-        private float GetAverageSpacing(string[] lines)
-        {
-            int totalSpacing = 0;
-            int count = 0;
-
-            for (int i = 0; i < lines.Length - 1; i++)
-            {
-                int spacing = Math.Abs(lines[i + 1].Length - lines[i].Length);
-                totalSpacing += spacing;
-                count++;
-            }
-
-            if (count > 0)
-            {
-                return (float)totalSpacing / count;
             }
             else
             {
-                return 0;
+                int index = 0;
+                while ((index = line.IndexOf(keyword, index)) != -1)
+                {
+                    string matchedKeyword = line.Substring(index, keyword.Length);
+                    int startIndex = Math.Max(0, index - 11);
+                    int endIndex = Math.Min(line.Length, index + keyword.Length + 11);
+                    string context = line.Substring(startIndex, endIndex - startIndex);
+                    AppendOutput($"{Path.GetFileName(zipFile)} - 第 {lineIndex} 行包含关键字：》{matchedKeyword}《；位置: {context}");
+                    index += keyword.Length;
+                }
             }
         }
 
-        private bool IsSpacingConsistent(string[] lines, float spacing)
-        {
-            for (int i = 0; i < lines.Length - 1; i++)
-            {
-                int currentSpacing = Math.Abs(lines[i + 1].Length - lines[i].Length);
-                if (Math.Abs(currentSpacing - spacing) > 1) // 允许1个像素的误差
-                {
-                    return false;
-                }
-            }
-            return true;
-        }*/
+
 
 
     }

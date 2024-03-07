@@ -1,7 +1,9 @@
-﻿using System;
+﻿using NPOI.Util;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using 工作助手.Function;
 
@@ -11,13 +13,15 @@ namespace 格式助手
     {
         DateTime lastCloseButtonClick = DateTime.MinValue;//窗口防误关计时器
         private GlobalKeyboardListener _keyboardListener;//键盘宏初始化
+        string Scanzip0String;//用来保存结果输出框中的说明文字。
         public Form1()
         {
             InitializeComponent();
             KeyDown += MyForm_KeyDown; // 自定义的KeyDown彩蛋事件处理方法
             FormClosing += new FormClosingEventHandler(Form1_FormClosing);// 自定义的Form1_FormClosing事件处理方法（防误关）
             copyKey.KeyDown += new KeyEventHandler(_copyKey);//键盘宏功能绑定
-
+            tabControl1.TabPages.Remove(tabPage3);//隐藏废弃功能
+            Scanzip0String = jieguo.Text;//启动时保存一次
         }
 
         private void Form1_Load(object sender, EventArgs e)//开窗时
@@ -38,7 +42,7 @@ namespace 格式助手
             {
                 // 用户第一次点击关闭按钮，弹出悬浮提示
                 ToolTip toolTip = new ToolTip();
-                toolTip.Show("快速点3下以关闭该应用程序", this, Width / 2 - 50, Height / 2 - 200, 2000);
+                toolTip.Show("快速点3下以关闭该应用程序", this, Width / 2 + 100, Height / 2-323 , 2000);
                 e.Cancel = true;
                 lastCloseButtonClick = DateTime.Now;
             }
@@ -198,13 +202,16 @@ namespace 格式助手
             string directoryPath = dirtext.Text;
 
             ZipScanner zipScanner = new ZipScanner();
-            zipScanner.ScanDirectory(directoryPath, CheckTxtDataBox.Checked);
+            zipScanner.ScanDirectory(directoryPath,keyWord.Text);
 
             jieguo.Text = zipScanner.GetOutput();
         }
+
+        
         private void Del_Click(object sender, EventArgs e)
         {
-            jieguo.Text = "检测结果将会出现在这里。当前状态：空闲";
+            jieguo.Text = Scanzip0String;
+            keyWord.Text= "!.\".,.:. .?.(.).'.;.小编.近日.最近.本周.本日.本年";
         }
         //压缩包扫描End-----------------------------
 
@@ -241,7 +248,7 @@ namespace 格式助手
 
         private void xuan_Click(object sender, EventArgs e)//选表格
         {
-            xlsDir.Text= Misc.xuanbiaoge();
+            xlsDir.Text = Misc.xuanbiaoge();
         }
         private void clear_Xls_Click(object sender, EventArgs e)//清除按钮
         {
@@ -268,20 +275,20 @@ namespace 格式助手
         private void runScan_Click(object sender, EventArgs e)
         {
             ScanZip2 scanZip2 = new ScanZip2();
-            if (comboBox1.SelectedIndex == 3) 
+            if (comboBox1.SelectedIndex == 3)
             {
                 string biaoge = Misc.xuanbiaoge();
-                List<string> dir= new List<string>();
+                List<string> dir = new List<string>();
                 dir.Add(dir1.Text);
                 dir.Add(dir2.Text);
-                scanjieguo2.Text = "选择的表格是："+ biaoge+"\r\n";
-                if(biaoge != "")
-                scanZip2.CompareDataWithZipFile(biaoge, "A", dir);
+                scanjieguo2.Text = "选择的表格是：" + biaoge + "\r\n";
+                if (biaoge != "")
+                    scanZip2.CompareDataWithZipFile(biaoge, "A", dir);
                 scanjieguo2.Text += scanZip2.GetOutput();
             }
             else if (comboBox1.SelectedIndex != -1)
             {
-                
+
                 scanZip2.CheckZip(dir1.Text, dir2.Text, comboBox1.SelectedIndex);
                 scanjieguo2.Text = scanZip2.GetOutput();
             }
@@ -350,7 +357,7 @@ namespace 格式助手
             }
         }
         //Win7文本框全选兼容性代码End-------------------------------
-        
+
 
         //彩蛋
         private void MyForm_KeyDown(object sender, KeyEventArgs e)//彩蛋
@@ -427,7 +434,89 @@ namespace 格式助手
                 e.Effect = DragDropEffects.None;
             }
         }
+        private void FileDir_DragDrop(object sender, DragEventArgs e)
+        {
+            // 获取拖放的文件夹路径
+            string[] folders = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (folders.Length > 0 && Directory.Exists(folders[0]))
+            {
+                FileDir.Text = folders[0];
+            }
+        }
+        private void FileDir_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
         //拖动放置文件目录End------------------------------
 
+
+
+        private void FileXuan_Click(object sender, EventArgs e)
+        {
+            Misc.xuanmulu(FileDir);
+        }
+
+        private void oneDesktop_Click(object sender, EventArgs e)
+        {
+            FileDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        }
+        private void nulldir1_Click(object sender, EventArgs e)
+        {
+            FileStar.Text = "";
+        }
+        
+        private void generate_Click(object sender, EventArgs e)
+        {
+            if (Regex.IsMatch(FileStar.Text, @"\d")) {
+                if (Directory.Exists(FileDir.Text)&& FileDir.Text!="") { 
+                    Misc.GenerateFiles(FileStar.Text, (int)numFile.Value, FileDir.Text);
+                    MessageBox.Show("生成完毕", "程序没有爆", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("无效的放置目录", "程序爆了", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+            } else {
+                MessageBox.Show("初始文件名中至少包含一个数字", "程序爆了", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+                
+            
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            FileDir.Text = "";
+        }
+
+
+        private void update_Click(object sender, EventArgs e)
+        {
+            UpDate.InstallUpdateSyncWithInfo();
+        }
+
+        bool f0 = true;
+        private void displayFunction_Click(object sender, EventArgs e)
+        {
+            if (f0)
+            {
+                tabControl1.TabPages.Insert(3, tabPage3);
+                displayFunction.Text = "隐藏废弃的功能";
+                f0 = false;
+            }
+            else
+            {
+                tabControl1.TabPages.Remove(tabPage3);
+                displayFunction.Text = "显示废弃的功能";
+                f0 = true;
+            }
+            
+        }
     }
 }
