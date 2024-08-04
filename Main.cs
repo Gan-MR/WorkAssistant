@@ -20,16 +20,13 @@ namespace 格式助手
             KeyDown += MyForm_KeyDown; // 自定义的KeyDown彩蛋事件处理方法
             FormClosing += new FormClosingEventHandler(Form1_FormClosing);// 自定义的Form1_FormClosing事件处理方法（防误关）
             copyKey.KeyDown += new KeyEventHandler(_copyKey);//键盘宏功能绑定
-            tabControl1.TabPages.Remove(tabPage3);//隐藏废弃功能
+            
             Scanzip0String = jieguo.Text;//启动时保存一次
         }
 
         private void Form1_Load(object sender, EventArgs e)//开窗时
         {
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-            {
-                checkedListBox1.SetItemChecked(i, true);//字符转换界面，默认启动全部功能
-            }
+            
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)//关窗（防误关）
         {
@@ -48,151 +45,8 @@ namespace 格式助手
             }
         }
 
-        characterManipulation cm = new characterManipulation();
-        string f1; // 将 f1 声明为成员变量
-        public void Function1()
-        {
-            // 第一个功能的实现代码
-            f1 = cm.ConvertDatesInText(textBox1.Text);
-            textBox2.Text = f1;
-        }
-        public void Function2()
-        {
-            // 第二个功能的实现代码
-            if (checkedListBox1.GetItemChecked(0))
-            {
-                // 将分号替换成句号,并清理特殊符号
-                string f2 = characterManipulation.RemoveSpecialSymbols(f1, Substitution.Text);
-                textBox2.Text = f2;
-            }
-            else
-            {
-                textBox2.Text = characterManipulation.RemoveSpecialSymbols(textBox1.Text, Substitution.Text);
-            }
-        }
-        private void Function3()
-        {
-            // 第三个功能的实现代码
-            if (checkedListBox1.GetItemChecked(0) && checkedListBox1.GetItemChecked(1) == false)
-            {
-                textBox2.Text = characterManipulation.RemoveParentheses(f1);
-            }
-            else if (checkedListBox1.GetItemChecked(1) && checkedListBox1.GetItemChecked(0) == false)
-            {
-                textBox2.Text = characterManipulation.RemoveParentheses(characterManipulation.RemoveSpecialSymbols(textBox1.Text, Substitution.Text));
-            }
-            else if (checkedListBox1.GetItemChecked(0) && checkedListBox1.GetItemChecked(1))
-            {
-                textBox2.Text = characterManipulation.RemoveParentheses(characterManipulation.RemoveSpecialSymbols(f1, Substitution.Text));
-            }
-            else
-            {
-                textBox2.Text = characterManipulation.RemoveParentheses(textBox1.Text);
-            }
-        }
-        //+-书名号和中文引号Start-------------------------
-        private void FrenchQuotes_Click(object sender, EventArgs e)
-        {
-            string inputText = Substitution.Text;
-            if (inputText.Contains("《") && inputText.Contains("》"))
-            {
-                inputText = inputText.Replace("《", "").Replace("》", "");
-            }
-            else
-            {
-                inputText = "《》" + inputText;
-            }
-            Substitution.Text = inputText;
-        }
-
-        private void QuotationMark_Click(object sender, EventArgs e)
-        {
-            string inputText = Substitution.Text;
-            if (inputText.Contains("“") && inputText.Contains("”"))
-            {
-                inputText = inputText.Replace("“", "").Replace("”", "");
-            }
-            else
-            {
-                inputText = "“”" + inputText;
-            }
-            Substitution.Text = inputText;
-        }
-        //+-书名号和中文引号End-------------------------
-        //自动或手动触发文字转换功能Start-------------------------
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            zuoshi(sender, e);
-        }
-        private void refresh_Click(object sender, EventArgs e)
-        {
-            zuoshi(sender, e);
-        }
-        private void zuoshi(object sender, EventArgs e)
-        {
-            bool anyChecked = false; // 标记是否有多选框被选中
-            foreach (object item in checkedListBox1.CheckedItems)
-            {
-                anyChecked = true; // 至少有一个多选框被选中
-                string functionality = item.ToString();
-                switch (functionality)
-                {
-                    case "数字日期转大写":
-                        Function1();
-                        break;
-                    case "特殊符号处理":
-                        Function2();
-                        break;
-                    case "清理括号（包括文本）":
-                        Function3();
-                        break;
-                    default:
-                        textBox2.Text = "异常";
-                        break;
-                }
-            }
-            // 如果没有任何多选框被选中，执行一个功能
-            if (!anyChecked)
-            {
-                // 执行相应的功能代码
-                textBox2.Text = textBox1.Text;
-            }
-        }
-        //自动或手动触发文字转换功能End-------------------------
-        //一键写入并获取结果Start-----------------------------
-        private void CopyText2_Click(object sender, EventArgs e)
-        {
-            textBox1.Clear();
-            if (Clipboard.ContainsText())
-            {
-                textBox1.Text = Clipboard.GetText();
-            }
-            else
-            {
-                textBox1.Text = "剪贴板内没有数据或获取失败";
-            }
-            Clipboard.SetText(textBox2.Text);
-        }
-        //一键写入并获取结果End-----------------------------
-        //仅复制结果Start-----------------------------
-        private void ccopy_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(textBox2.Text);
-        }
-        //仅复制结果End-----------------------------
-        //追加文字Start-----------------------------
-        private void zuijia_Click(object sender, EventArgs e)
-        {
-            textBox1.Text += Clipboard.GetText();
-        }
-        //追加文字End-----------------------------
-        //仅清空按钮Start-----------------------------
-        private void set0_Click(object sender, EventArgs e)
-        {
-            textBox1.Text = null;//仅清空
-        }
-        //仅清空按钮End-----------------------------
-        //压缩包扫描Start-----------------------------
+        
+        //扫描Start-----------------------------
         private void ChooseDir_Click(object sender, EventArgs e)//选目录
         {
             Misc.xuanmulu(dirtext);
@@ -202,7 +56,7 @@ namespace 格式助手
             string directoryPath = dirtext.Text;
 
             ZipScanner zipScanner = new ZipScanner();
-            zipScanner.ScanDirectory(directoryPath,keyWord.Text);
+            zipScanner.ScanDirectory(directoryPath);
 
             jieguo.Text = zipScanner.GetOutput();
         }
@@ -211,54 +65,12 @@ namespace 格式助手
         private void Del_Click(object sender, EventArgs e)
         {
             jieguo.Text = Scanzip0String;
-            keyWord.Text= "!.\".,.:. .?.(.).'.;.小编.近日.最近.本周.本日.本年";
+            
         }
-        //压缩包扫描End-----------------------------
+        //扫描End-----------------------------
 
-        //表格扫描Start-----------------------------
-        private async void RunXls_Click(object sender, EventArgs e)//扫表格
-        {
-            btn_stopScanXls.Enabled = true;
-            runXls.Enabled = false;
-            string extension = Path.GetExtension(xlsDir.Text);
+        
 
-            if (extension == ".xls" || extension == ".xlsx" || extension == ".csv")
-            {
-
-                textBox5.Text = "扫描中，稍等。。。\r\n";
-                ScanXls scanXls = new ScanXls();
-                progressBar1.Maximum = (int)numericUpDown2.Value;
-
-                await scanXls.CheckExcelLinks(xlsDir.Text,
-                    (int)numericUpDown1.Value,
-                    (int)numericUpDown2.Value,
-                    (int)numericUpDown3.Value,
-                    yellow.Checked, progressBar1);
-
-                textBox5.Text += scanXls.GetOutput();
-
-            }
-            else
-            {
-                textBox5.Text = "请选择一个表格再开始。（路径或文件异常）";
-            }
-            btn_stopScanXls.Enabled = false;
-            runXls.Enabled = true;
-        }
-
-        private void xuan_Click(object sender, EventArgs e)//选表格
-        {
-            xlsDir.Text = Misc.xuanbiaoge();
-        }
-        private void clear_Xls_Click(object sender, EventArgs e)//清除按钮
-        {
-            textBox5.Text = "检测结果将会出现在这里。当前状态：空闲\r\n目前可以检测链接是否能正常打开";
-        }
-        private void btn_stopScanXls_Click(object sender, EventArgs e)//停止扫描
-        {
-            ScanXls.cancellationTokenSource.Cancel();
-        }
-        //表格扫描End-----------------------------
 
 
         //批量压缩包校验Start-----------------------------
@@ -275,7 +87,7 @@ namespace 格式助手
         private void runScan_Click(object sender, EventArgs e)
         {
             ScanZip2 scanZip2 = new ScanZip2();
-            if (comboBox1.SelectedIndex == 3)
+            if (comboBox1.SelectedIndex == 1)
             {
                 string biaoge = Misc.xuanbiaoge();
                 List<string> dir = new List<string>();
@@ -283,13 +95,13 @@ namespace 格式助手
                 dir.Add(dir2.Text);
                 scanjieguo2.Text = "选择的表格是：" + biaoge + "\r\n";
                 if (biaoge != "")
-                    scanZip2.CompareDataWithZipFile(biaoge, "A", dir);
+                    scanZip2.CompareDataWithFolders(biaoge, "A", dir);
                 scanjieguo2.Text += scanZip2.GetOutput();
             }
-            else if (comboBox1.SelectedIndex != -1)
+            else if (comboBox1.SelectedIndex == 0)
             {
 
-                scanZip2.CheckZip(dir1.Text, dir2.Text, comboBox1.SelectedIndex);
+                scanZip2.CheckZip(dir1.Text, dir2.Text);
                 scanjieguo2.Text = scanZip2.GetOutput();
             }
             else
@@ -339,24 +151,7 @@ namespace 格式助手
 
         //键盘宏End-----------------------
 
-        //Win7文本框全选兼容性代码Start-----------------------
-        private void textBox2_KeyDown(object sender, KeyEventArgs e)//win7兼容性，ctrl+a全选结果
-        {
-            if (e.Control && e.KeyCode == Keys.A)
-            {
-                textBox2.SelectAll();
-                e.SuppressKeyPress = true; // 防止同时触发默认的全选操作
-            }
-        }
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)//win7兼容性，ctrl+a全选结果
-        {
-            if (e.Control && e.KeyCode == Keys.A)
-            {
-                textBox1.SelectAll();
-                e.SuppressKeyPress = true; // 防止同时触发默认的全选操作
-            }
-        }
-        //Win7文本框全选兼容性代码End-------------------------------
+        
 
 
         //彩蛋
@@ -476,7 +271,7 @@ namespace 格式助手
         {
             if (Regex.IsMatch(FileStar.Text, @"\d")) {
                 if (Directory.Exists(FileDir.Text)&& FileDir.Text!="") { 
-                    Misc.GenerateFiles(FileStar.Text, (int)numFile.Value, FileDir.Text);
+                    Misc.GenerateFiles(FileStar.Text, (int)numFile.Value, FileDir.Text,wenjianjia.Checked);
                     MessageBox.Show("生成完毕", "程序没有爆", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
@@ -501,22 +296,9 @@ namespace 格式助手
             UpDate.InstallUpdateSyncWithInfo();
         }
 
-        bool f0 = true;
-        private void displayFunction_Click(object sender, EventArgs e)
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (f0)
-            {
-                tabControl1.TabPages.Insert(3, tabPage3);
-                displayFunction.Text = "隐藏废弃的功能";
-                f0 = false;
-            }
-            else
-            {
-                tabControl1.TabPages.Remove(tabPage3);
-                displayFunction.Text = "显示废弃的功能";
-                f0 = true;
-            }
-            
+
         }
     }
 }
